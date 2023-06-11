@@ -1,27 +1,27 @@
-import CredentialsProvider from "next-auth/providers/credentials"
-import { NextAuthOptions, User } from "next-auth"
+import CredentialsProvider from 'next-auth/providers/credentials'
+import { NextAuthOptions } from 'next-auth'
+import AppDatabase from '@/repository/database'
 
 export const authOptions: NextAuthOptions = {
     providers: [
         CredentialsProvider({
-            name: "Credentials",
+            name: 'Credentials',
             credentials: {
-                username: { label: "Username", type: "text" },
-                password: { label: "Password", type: "password" }
+                username: { label: 'Username', type: 'text' },
+                password: { label: 'Password', type: 'password' }
             },
             async authorize(credentials, req) {
-                // Used to testing purposes only, will change to API call.
-                if (credentials?.username === "AndreasLill" && credentials?.password == "pass") {
-                    return { id: "1", name: "AndreasLill", email: "andreas@email.com" } as User
-                }
-                else {
+                if (!credentials?.username || !credentials?.password) {
+                    console.log('Username or password was empty.')
                     return null
                 }
-            },
+
+                return AppDatabase.getUser(credentials.username, credentials.password)
+            }
         })
     ],
     session: {
-        strategy: "jwt",
+        strategy: 'jwt'
     },
     callbacks: {
         async jwt({ token, user }) {
@@ -35,10 +35,10 @@ export const authOptions: NextAuthOptions = {
         session({ session, token }) {
             if (token && session.user) {
                 session.user.id = token.id
-                session.user.name = token.name
-                session.user.email = token.email
+                session.user.name = token.name!
+                session.user.email = token.email!
             }
             return session
         }
-    },
+    }
 }

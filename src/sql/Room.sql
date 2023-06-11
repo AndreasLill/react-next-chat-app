@@ -1,0 +1,4 @@
+CREATE TABLE [dbo].[Room] (
+    [ID] UNIQUEIDENTIFIER PRIMARY KEY DEFAULT(newid()),
+    [Name] NVARCHAR(64) NOT NULL,
+)
