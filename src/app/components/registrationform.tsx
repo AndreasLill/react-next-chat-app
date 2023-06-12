@@ -1,5 +1,5 @@
 import { ApiResponse } from '@/types/api'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { AlertCircle, Loader2 } from 'lucide-react'
 
 interface Props {
