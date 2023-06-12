@@ -9,7 +9,7 @@ interface Props {
 export default function LoginForm(props: Props) {
     const [loading, setLoading] = useState<boolean>(false)
     const [error, setError] = useState<string>('')
-    const [username, setUsername] = useState<string>('')
+    const [email, setEmail] = useState<string>('')
     const [password, setPassword] = useState<string>('')
 
     const onLogin = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -17,14 +17,14 @@ export default function LoginForm(props: Props) {
         setError('')
         setLoading(true)
         const response = await signIn('credentials', {
-            username: username,
+            username: email,
             password: password,
             redirect: false
         })
         setLoading(false)
         if (response?.error === 'CredentialsSignin') {
-            setError('Incorrect username or password.')
-            setUsername('')
+            setError('Incorrect email or password.')
+            setPassword('')
         }
     }
 
@@ -33,16 +33,16 @@ export default function LoginForm(props: Props) {
             <form className="flex flex-col w-96 p-8 bg-neutral-100 dark:bg-zinc-800 rounded-lg shadow space-y-8" onSubmit={onLogin}>
                 <h1 className="text-center dark:text-white font-bold text-xl">Log in to your account</h1>
                 <div>
-                    <label htmlFor="username" className="block dark:text-white text-sm">
-                        Username
+                    <label htmlFor="email" className="block dark:text-white text-sm">
+                        Email
                     </label>
                     <input
-                        id="username"
+                        id="email"
                         type="text"
-                        placeholder="Username"
+                        placeholder="Email"
                         className="w-full px-3 py-2 mt-2 border rounded focus:outline-none focus:outline-offset-0 focus:outline-emerald-700"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                     />
                     <label htmlFor="password" className="block mt-4 dark:text-white text-sm">
                         Password

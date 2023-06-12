@@ -12,10 +12,11 @@ export const authOptions: NextAuthOptions = {
             },
             async authorize(credentials, req) {
                 if (!credentials?.username || !credentials?.password) {
-                    console.log('Username or password was empty.')
+                    console.log('Email or password was empty.')
                     return null
                 }
 
+                // Username is email for login credentials.
                 return AppDatabase.getUser(credentials.username, credentials.password)
             }
         })

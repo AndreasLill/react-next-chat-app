@@ -22,30 +22,29 @@ const sqlConfig = {
 export default class AppDatabase {
     private constructor() {}
 
-    static async getUser(username: string, password: string) {
+    static async getUser(email: string, password: string) {
         try {
             const pool = await sql.connect(sqlConfig)
-            const results = await pool.query(`SELECT ID, Name, Password, Email FROM [User] WHERE Name = '${username}'`)
-            const user = results.recordset as DbUser[]
+            const results = await pool
+                .request()
+                .input('pEmail', sql.VarChar(255), email)
+                .query('SELECT ID, Name, Password, Email FROM [User] WHERE Email = @pEmail')
 
+            const user = results.recordset as DbUser[]
             if (user[0]) {
                 const success = await hashCompare(password, user[0].Password)
 
                 if (!success) {
-                    console.log('wrong password.')
                     return null
                 }
-
-                console.log('authentication success!')
+                console.log(`User ${email} has logged in.`)
                 return {
                     id: user[0].ID,
                     name: user[0].Name,
                     email: user[0].Email
                 } as User
-            } else {
-                console.log('user not found.')
-                return null
             }
+            return null
         } catch (error) {
             console.error(error)
             return null
@@ -60,13 +59,18 @@ export default class AppDatabase {
                 .input('pEmail', sql.VarChar(255), email)
                 .query('SELECT COUNT(*) as count FROM [User] WHERE Email = @pEmail')
 
-            return results.recordset[0].count !== 0
+            const exists = results.recordset[0].count !== 0
+            if (exists) {
+                console.log(`User '${email}' already exists.`)
+            }
+            return exists
         } catch (error: any) {
+            console.error(error)
             throw new Error(error)
         }
     }
 
-    static async addUser(username: string, password: string, email: string) {
+    static async addUser(name: string, email: string, password: string) {
         const hashedPass = await hashPass(password)
         const pool = await sql.connect(sqlConfig)
         const ps = new sql.PreparedStatement(pool)
@@ -76,11 +80,13 @@ export default class AppDatabase {
         try {
             await ps.prepare('INSERT INTO [User](Name, Password, Email) VALUES(@pName, @pPassword, @pEmail)')
             await ps.execute({
-                pName: username,
+                pName: name,
                 pPassword: hashedPass,
                 pEmail: email
             })
+            console.log(`Added user '${email}' to the database.`)
         } catch (error: any) {
+            console.error(error)
             throw new Error(error)
         } finally {
             await ps.unprepare()
