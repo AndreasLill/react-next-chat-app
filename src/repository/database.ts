@@ -52,6 +52,20 @@ export default class AppDatabase {
         }
     }
 
+    static async existsUser(email: string) {
+        try {
+            const pool = await sql.connect(sqlConfig)
+            const results = await pool
+                .request()
+                .input('pEmail', sql.VarChar(255), email)
+                .query('SELECT COUNT(*) as count FROM [User] WHERE Email = @pEmail')
+
+            return results.recordset[0].count !== 0
+        } catch (error: any) {
+            throw new Error(error)
+        }
+    }
+
     static async addUser(username: string, password: string, email: string) {
         const hashedPass = await hashPass(password)
         const pool = await sql.connect(sqlConfig)
@@ -66,9 +80,8 @@ export default class AppDatabase {
                 pPassword: hashedPass,
                 pEmail: email
             })
-            console.log('added user')
-        } catch (error) {
-            console.error(error)
+        } catch (error: any) {
+            throw new Error(error)
         } finally {
             await ps.unprepare()
         }
