@@ -7,7 +7,7 @@ export async function POST(req: Request) {
 
     // Check if user information is null.
     if (!body?.username || !body?.email || !body?.password) {
-        res = { status: 'error', code: 400, error: 'info-missing' }
+        res = { status: 'error', code: 400, error: 'Please fill in all required fields.' }
         return new Response(JSON.stringify(res))
     }
 
@@ -15,12 +15,12 @@ export async function POST(req: Request) {
     try {
         if (await AppDatabase.existsUser(body.email)) {
             console.log(`Email '${body.email}' already exists.`)
-            res = { status: 'error', code: 400, error: 'email-taken' }
+            res = { status: 'error', code: 400, error: 'This email is already taken.' }
             return new Response(JSON.stringify(res))
         }
     } catch (error) {
         console.error(error)
-        res = { status: 'error', code: 400, error: 'db-error' }
+        res = { status: 'error', code: 400, error: 'There was a connection error.' }
     }
 
     // Add user to database.
@@ -30,7 +30,7 @@ export async function POST(req: Request) {
         res = { status: 'success', code: 200 }
     } catch (error) {
         console.error(error)
-        res = { status: 'error', code: 400, error: 'db-error' }
+        res = { status: 'error', code: 400, error: 'There was a connection error.' }
     }
 
     return new Response(JSON.stringify(res))
