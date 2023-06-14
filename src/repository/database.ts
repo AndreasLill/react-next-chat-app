@@ -21,7 +21,7 @@ const sqlConfig = {
 export default class AppDatabase {
     private constructor() {}
 
-    static async getUser(email: string, password: string) {
+    static async authenticateUser(email: string, password: string) {
         try {
             const pool = await sql.connect(sqlConfig)
             const results = await pool
@@ -69,25 +69,35 @@ export default class AppDatabase {
     }
 
     static async addUser(name: string, email: string, password: string) {
-        const hashedPass = await hashPass(password)
-        const pool = await sql.connect(sqlConfig)
-        const ps = new sql.PreparedStatement(pool)
-        ps.input('pName', sql.NVarChar(32))
-        ps.input('pPassword', sql.VarChar(60))
-        ps.input('pEmail', sql.VarChar(255))
         try {
-            await ps.prepare('INSERT INTO [User](Name, Password, Email) VALUES(@pName, @pPassword, @pEmail)')
-            await ps.execute({
-                pName: name,
-                pPassword: hashedPass,
-                pEmail: email
-            })
-            console.log(`Added user '${email}' to the database.`)
+            const hashedPass = await hashPass(password)
+            const pool = await sql.connect(sqlConfig)
+            const results = await pool
+                .request()
+                .input('pName', sql.NVarChar(32), name)
+                .input('pPassword', sql.VarChar(60), hashedPass)
+                .input('pEmail', sql.VarChar(255), email)
+                .query('INSERT INTO [User](Name, Password, Email) OUTPUT inserted.ID VALUES(@pName, @pPassword, @pEmail)')
+            console.log(`Added user '${results.recordset[0].ID}' to the database.`)
+            return results.recordset[0].ID as string
         } catch (error: any) {
             console.error(error)
             throw new Error(error)
-        } finally {
-            await ps.unprepare()
+        }
+    }
+
+    static async addRoom(name: string) {
+        try {
+            const pool = await sql.connect(sqlConfig)
+            const results = await pool
+                .request()
+                .input('pName', sql.VarChar(255), name)
+                .query('INSERT INTO [Room](Name) OUTPUT inserted.ID VALUES(@pName)')
+            console.log(`Added room '${results.recordset[0].ID}' to the database.`)
+            return results.recordset[0].ID as string
+        } catch (error: any) {
+            console.error(error)
+            throw new Error(error)
         }
     }
 }

@@ -4,6 +4,14 @@ import { signOut, useSession } from 'next-auth/react'
 export default function Chat() {
     const { data: session, status } = useSession()
 
+    async function onCreateRoom(name: string) {
+        const response = await fetch('/api/room/create', {
+            method: 'POST',
+            body: JSON.stringify({ name: name })
+        }).then((res: Response) => res.json())
+        console.log(response)
+    }
+
     return (
         <div className="flex mx-auto max-w-5xl px-8 py-24 space-x-4">
             <div className="flex flex-col w-80 h-[48rem] p-8 bg-neutral-100 dark:bg-neutral-800 rounded-lg shadow space-y-4">
@@ -18,7 +26,11 @@ export default function Chat() {
                         </button>
                     </div>
                 </div>
-                <button type="submit" className="w-full p-3 bg-emerald-700 hover:bg-emerald-600 text-white font-semibold text-sm rounded">
+                <button
+                    type="submit"
+                    className="w-full p-3 bg-emerald-700 hover:bg-emerald-600 text-white font-semibold text-sm rounded"
+                    onClick={() => onCreateRoom('room123')}
+                >
                     <div className="flex w-full space-x-2">
                         <Plus size={20} />
                         <p>Create Room</p>

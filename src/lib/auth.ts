@@ -17,7 +17,7 @@ export const authOptions: NextAuthOptions = {
                 }
 
                 // Username is email for login credentials.
-                return AppDatabase.getUser(credentials.username, credentials.password)
+                return AppDatabase.authenticateUser(credentials.username, credentials.password)
             }
         })
     ],
