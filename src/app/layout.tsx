@@ -14,7 +14,7 @@ export const metadata = {
 export default function RootLayout({ children, session }: { children: React.ReactNode; session: any }) {
     return (
         <html lang="en">
-            <body className={`${font.className} bg-white dark:bg-neutral-900`}>
+            <body className={font.className}>
                 <SessionProvider session={session}>{children}</SessionProvider>
             </body>
         </html>

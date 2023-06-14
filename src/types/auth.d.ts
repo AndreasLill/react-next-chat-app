@@ -1,12 +1,17 @@
 import { DefaultSession } from 'next-auth'
-import { User } from './user'
+
+type SessionUser = {
+    id: string
+}
 
 declare module 'next-auth' {
     interface Session extends DefaultSession {
-        user?: User
+        user?: SessionUser
     }
 }
 
 declare module 'next-auth/jwt' {
-    interface JWT extends User {}
+    interface JWT {
+        id: string
+    }
 }

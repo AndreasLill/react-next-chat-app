@@ -2,3 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+    body {
+        @apply bg-white;
+        @apply dark:bg-neutral-900;
+        @apply text-black;
+        @apply dark:text-white;
+    }
+    input {
+        @apply text-black;
+    }
+}

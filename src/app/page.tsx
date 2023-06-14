@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { Loader2 } from 'lucide-react'
 import LoginForm from './components/loginform'
 import RegistrationForm from './components/registrationform'
-import UserInfo from './components/userinfo'
+import Chat from './components/chat'
 
 enum AuthTabs {
     Login,
@@ -18,11 +18,7 @@ export default function Home() {
 
     // Authenticated and logged in.
     if (session?.user) {
-        return (
-            <div className="flex flex-col items-center mx-auto max-w-5xl px-8 py-24">
-                <UserInfo />
-            </div>
-        )
+        return <Chat />
     }
 
     // Authentication loading.

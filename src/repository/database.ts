@@ -1,6 +1,5 @@
-import { User } from '../types/user'
 import { hashCompare, hashPass } from '../lib/crypt'
-import { DbUser } from './dbtypes'
+import { SessionUser } from '@/types/auth'
 
 const sql = require('mssql')
 const sqlConfig = {
@@ -28,21 +27,20 @@ export default class AppDatabase {
             const results = await pool
                 .request()
                 .input('pEmail', sql.VarChar(255), email)
-                .query('SELECT ID, Name, Password, Email FROM [User] WHERE Email = @pEmail')
+                .query('SELECT ID, Password FROM [User] WHERE Email = @pEmail')
 
-            const user = results.recordset as DbUser[]
-            if (user[0]) {
-                const success = await hashCompare(password, user[0].Password)
+            if (results.recordset) {
+                const record = results.recordset[0]
+                const success = await hashCompare(password, record.Password)
 
                 if (!success) {
                     return null
                 }
+
                 console.log(`User ${email} has logged in.`)
                 return {
-                    id: user[0].ID,
-                    name: user[0].Name,
-                    email: user[0].Email
-                } as User
+                    id: record.ID
+                } as SessionUser
             }
             return null
         } catch (error) {
