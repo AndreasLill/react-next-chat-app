@@ -1,4 +1,3 @@
-import { ApiResponse } from '@/types/api'
 import { useState } from 'react'
 import { AlertCircle, Loader2 } from 'lucide-react'
 
@@ -18,20 +17,21 @@ export default function RegistrationForm(props: Props) {
         e.preventDefault()
         setError('')
         setLoading(true)
-        const response: ApiResponse = await fetch('/api/user/register', {
+
+        const response = await fetch('/api/user/register', {
             method: 'POST',
             body: JSON.stringify({
                 name: name,
                 email: email,
                 password: password
             })
-        }).then((res: Response) => res.json())
+        }).then((res: Response) => res)
+
         setLoading(false)
-        if (response.error) {
-            setError(response.error)
-        }
-        if (!response.error && response.status === 'success') {
+        if (response.ok) {
             setSuccess(true)
+        } else {
+            setError(response.statusText)
         }
     }
 

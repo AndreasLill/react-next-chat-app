@@ -1,4 +1,5 @@
-import { hashCompare, hashPass } from '../lib/crypt'
+import { Room } from '@/types/room'
+import { hashCompare, hashPass } from './crypt'
 import { SessionUser } from '@/types/auth'
 
 const sql = require('mssql')
@@ -72,27 +73,43 @@ export default class AppDatabase {
         try {
             const hashedPass = await hashPass(password)
             const pool = await sql.connect(sqlConfig)
-            const results = await pool
+            await pool
                 .request()
                 .input('pName', sql.NVarChar(32), name)
                 .input('pPassword', sql.VarChar(60), hashedPass)
                 .input('pEmail', sql.VarChar(255), email)
-                .query('INSERT INTO [User](Name, Password, Email) OUTPUT inserted.ID VALUES(@pName, @pPassword, @pEmail)')
-            console.log(`Added user '${results.recordset[0].ID}' to the database.`)
-            return results.recordset[0].ID as string
+                .query('INSERT INTO [User](Name, Password, Email) VALUES(@pName, @pPassword, @pEmail)')
+            console.log(`Added user '${email}' to the database.`)
         } catch (error: any) {
             console.error(error)
             throw new Error(error)
         }
     }
 
-    static async addRoom(name: string) {
+    static async getRooms(userId: string) {
+        try {
+            const pool = await sql.connect(sqlConfig)
+            // Intentional lower case select from SQL to cast to Room object in typescript.
+            const results = await pool
+                .request()
+                .input('pOwner', sql.UniqueIdentifier, userId)
+                .query('SELECT id, owner, name FROM [Room] WHERE Owner = @pOwner')
+            console.log(`Get all rooms with owner ${userId} from the database.`)
+            return results.recordset as Room[]
+        } catch (error: any) {
+            console.error(error)
+            throw new Error(error)
+        }
+    }
+
+    static async addRoom(userId: string, name: string) {
         try {
             const pool = await sql.connect(sqlConfig)
             const results = await pool
                 .request()
+                .input('pOwner', sql.UniqueIdentifier, userId)
                 .input('pName', sql.VarChar(255), name)
-                .query('INSERT INTO [Room](Name) OUTPUT inserted.ID VALUES(@pName)')
+                .query('INSERT INTO [Room](Owner, Name) OUTPUT inserted.ID VALUES(@pOwner, @pName)')
             console.log(`Added room '${results.recordset[0].ID}' to the database.`)
             return results.recordset[0].ID as string
         } catch (error: any) {

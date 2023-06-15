@@ -1,6 +1,6 @@
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { NextAuthOptions } from 'next-auth'
-import AppDatabase from '@/repository/database'
+import AppDatabase from '@/lib/database'
 
 export const authOptions: NextAuthOptions = {
     providers: [
