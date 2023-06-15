@@ -30,28 +30,28 @@ export default function LoginForm(props: Props) {
 
     return (
         <div className="flex flex-col items-center mx-auto max-w-5xl px-8 py-24">
-            <form className="flex flex-col w-96 p-8 bg-neutral-100 dark:bg-zinc-800 rounded-lg shadow space-y-8" onSubmit={onLogin}>
-                <h1 className="text-center dark:text-white font-bold text-xl">Log in to your account</h1>
+            <form className="flex flex-col w-96 p-8 bg-white dark:bg-zinc-800 rounded-lg shadow space-y-8" onSubmit={onLogin}>
+                <h1 className="text-center font-bold text-xl">Log in to your account</h1>
                 <div>
-                    <label htmlFor="email" className="block dark:text-white text-sm">
+                    <label htmlFor="email" className="block text-sm">
                         Email
                     </label>
                     <input
                         id="email"
                         type="text"
                         placeholder="Email"
-                        className="w-full px-3 py-2 mt-2 border rounded focus:outline-none focus:outline-offset-0 focus:outline-emerald-700"
+                        className="w-full px-3 py-2 mt-2 border rounded bg-neutral-100 dark:bg-white focus:outline-none focus:outline-offset-0 focus:outline-emerald-700"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                     />
-                    <label htmlFor="password" className="block mt-4 dark:text-white text-sm">
+                    <label htmlFor="password" className="block mt-4 text-sm">
                         Password
                     </label>
                     <input
                         id="password"
                         type="password"
                         placeholder="Password"
-                        className="w-full px-3 py-2 mt-2 border rounded focus:outline-none focus:outline-offset-0 focus:outline-emerald-700"
+                        className="w-full px-3 py-2 mt-2 border rounded bg-neutral-100 dark:bg-white focus:outline-none focus:outline-offset-0 focus:outline-emerald-700"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
@@ -63,7 +63,7 @@ export default function LoginForm(props: Props) {
                     </div>
                 </button>
                 <div className="flex flex-col w-full items-center">
-                    <p className="text-center text-sm dark:text-white">No account yet?</p>
+                    <p className="text-center text-sm">No account yet?</p>
                     <button
                         className="text-center px-4 py-2 text-emerald-700 hover:text-emerald-600 font-semibold text-sm rounded"
                         type="button"

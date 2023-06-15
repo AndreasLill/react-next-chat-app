@@ -38,10 +38,10 @@ export default function RegistrationForm(props: Props) {
     if (success) {
         return (
             <div className="flex flex-col items-center mx-auto max-w-5xl px-8 py-24">
-                <div className="flex flex-col w-96 p-8 bg-neutral-100 dark:bg-zinc-800 rounded-lg shadow space-y-8">
+                <div className="flex flex-col w-96 p-8 bg-white dark:bg-zinc-800 rounded-lg shadow space-y-8">
                     <div>
-                        <h1 className="text-center text-xl dark:text-white">Welcome!</h1>
-                        <p className="mt-4 text-center text-sm dark:text-white">Your account has been created.</p>
+                        <h1 className="text-center text-xl">Welcome!</h1>
+                        <p className="mt-4 text-center text-sm">Your account has been created.</p>
                     </div>
                     <button
                         className="text-center px-4 py-2 text-emerald-700 hover:text-emerald-600 font-semibold rounded"
@@ -57,39 +57,39 @@ export default function RegistrationForm(props: Props) {
 
     return (
         <div className="flex flex-col items-center mx-auto max-w-5xl px-8 py-24">
-            <form className="flex flex-col w-96 p-8 bg-neutral-100 dark:bg-zinc-800 rounded-lg shadow space-y-8" onSubmit={onRegister}>
-                <h1 className="text-center dark:text-white font-bold text-xl">Create a new account</h1>
+            <form className="flex flex-col w-96 p-8 bg-white dark:bg-zinc-800 rounded-lg shadow space-y-8" onSubmit={onRegister}>
+                <h1 className="text-center font-bold text-xl">Create a new account</h1>
                 <div>
-                    <label htmlFor="name" className="block dark:text-white text-sm">
+                    <label htmlFor="name" className="block text-sm">
                         Display Name
                     </label>
                     <input
                         id="name"
                         type="text"
                         placeholder="Display Name"
-                        className="w-full px-3 py-2 mt-2 border rounded focus:outline-none focus:outline-offset-0 focus:outline-emerald-700"
+                        className="w-full px-3 py-2 mt-2 border rounded bg-neutral-100 dark:bg-white focus:outline-none focus:outline-offset-0 focus:outline-emerald-700"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                     />
-                    <label htmlFor="reg-email" className="block mt-4 dark:text-white text-sm">
+                    <label htmlFor="reg-email" className="block mt-4 text-sm">
                         Email
                     </label>
                     <input
                         id="email"
                         type="text"
                         placeholder="Email"
-                        className="w-full px-3 py-2 mt-2 border rounded focus:outline-none focus:outline-offset-0 focus:outline-emerald-700"
+                        className="w-full px-3 py-2 mt-2 border rounded bg-neutral-100 dark:bg-white focus:outline-none focus:outline-offset-0 focus:outline-emerald-700"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                     />
-                    <label htmlFor="reg-password" className="block mt-4 dark:text-white text-sm">
+                    <label htmlFor="reg-password" className="block mt-4 text-sm">
                         Password
                     </label>
                     <input
                         id="password"
                         type="password"
                         placeholder="Password"
-                        className="w-full px-3 py-2 mt-2 border rounded focus:outline-none focus:outline-offset-0 focus:outline-emerald-700"
+                        className="w-full px-3 py-2 mt-2 border rounded bg-neutral-100 dark:bg-white focus:outline-none focus:outline-offset-0 focus:outline-emerald-700"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
@@ -101,7 +101,7 @@ export default function RegistrationForm(props: Props) {
                     </div>
                 </button>
                 <div className="flex flex-col w-full items-center">
-                    <p className="text-center text-sm dark:text-white">Already have an account?</p>
+                    <p className="text-center text-sm">Already have an account?</p>
                     <button
                         className="text-center px-4 py-2 text-emerald-700 hover:text-emerald-600 font-semibold text-sm rounded"
                         type="button"

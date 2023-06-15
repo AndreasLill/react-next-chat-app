@@ -25,7 +25,7 @@ export default function Chat() {
 
     return (
         <div className="flex mx-auto max-w-5xl px-8 py-24 space-x-4">
-            <div className="flex flex-col w-80 h-[48rem] p-8 bg-neutral-100 dark:bg-neutral-800 rounded-lg shadow space-y-4">
+            <div className="flex flex-col w-80 h-[48rem] p-8 bg-white dark:bg-neutral-800 rounded-lg shadow space-y-4">
                 <div className="flex justify-between w-full h-16">
                     <div className="flex w-full justify-start items-center space-x-2">
                         <UserCircle />
@@ -51,7 +51,7 @@ export default function Chat() {
                     <p key={room.id}>{room.name}</p>
                 ))}
             </div>
-            <div className="flex flex-col flex-grow h-[48rem] p-8 bg-neutral-100 dark:bg-neutral-800 rounded-lg shadow">
+            <div className="flex flex-col flex-grow h-[48rem] p-8 bg-white dark:bg-neutral-800 rounded-lg shadow">
                 <p>Chat Box Here</p>
             </div>
         </div>
