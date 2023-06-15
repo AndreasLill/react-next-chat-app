@@ -1,5 +1,8 @@
+import { Room } from './room'
+
 export type User = {
     id: string
-    name: string
     email: string
+    name: string
+    rooms: Room[]
 }

@@ -1,22 +1,27 @@
+import { User } from '@/types/user'
 import { Room } from '@/types/room'
 import { UserCircle, Plus, LogOut } from 'lucide-react'
 import { signOut, useSession } from 'next-auth/react'
 import { useEffect } from 'react'
 import useSWR from 'swr'
 
-const fetcher = (url: string) => fetch(url).then((res: Response) => res.json())
+const fetcher = (url: string) => fetch(url, { method: 'GET' }).then((res: Response) => res.json())
 
 export default function Chat() {
     const { data: session } = useSession()
-    const { data: rooms } = useSWR<Room[]>('/api/room/get', fetcher)
+    const { data: user } = useSWR<User>('/api/user', fetcher)
 
     async function onCreateRoom(name: string) {
-        const response = await fetch('/api/room/create', {
+        const response = await fetch('/api/room', {
             method: 'POST',
             body: JSON.stringify({ name: name })
         }).then((res: Response) => res)
         console.log(response)
     }
+
+    useEffect(() => {
+        console.log(user)
+    }, [user])
 
     return (
         <div className="flex mx-auto max-w-5xl px-8 py-24 space-x-4">
@@ -42,7 +47,7 @@ export default function Chat() {
                         <p>Create Room</p>
                     </div>
                 </button>
-                {rooms?.map((room: Room) => (
+                {user?.rooms.map((room: Room) => (
                     <p key={room.id}>{room.name}</p>
                 ))}
             </div>

@@ -1,6 +1,7 @@
-import { Room } from '@/types/room'
 import { hashCompare, hashPass } from './crypt'
 import { SessionUser } from '@/types/auth'
+import { Room } from '@/types/room'
+import { User } from '@/types/user'
 
 const sql = require('mssql')
 const sqlConfig = {
@@ -8,6 +9,7 @@ const sqlConfig = {
     password: process.env.DB_PASS,
     database: process.env.DB_NAME,
     server: process.env.DB_HOST,
+    parseJSON: true,
     pool: {
         max: 10,
         min: 0,
@@ -86,16 +88,16 @@ export default class AppDatabase {
         }
     }
 
-    static async getRooms(userId: string) {
+    static async getUser(userId: string) {
         try {
             const pool = await sql.connect(sqlConfig)
-            // Intentional lower case select from SQL to cast to Room object in typescript.
-            const results = await pool
-                .request()
-                .input('pOwner', sql.UniqueIdentifier, userId)
-                .query('SELECT id, owner, name FROM [Room] WHERE Owner = @pOwner')
-            console.log(`Get all rooms with owner ${userId} from the database.`)
-            return results.recordset as Room[]
+            const results = await pool.request().input('pUserId', sql.UniqueIdentifier, userId)
+                .query(`SELECT ID AS 'id', Email AS 'email', Name AS 'name',
+                (SELECT ID AS 'id', Name AS 'name' FROM [dbo].[Room] AS r WHERE Owner = [User].ID FOR JSON PATH) as 'rooms'
+                FROM [dbo].[User]
+                WHERE ID = @pUserId
+                FOR JSON PATH, WITHOUT_ARRAY_WRAPPER`)
+            return results.recordset[0] as User
         } catch (error: any) {
             console.error(error)
             throw new Error(error)
@@ -107,9 +109,9 @@ export default class AppDatabase {
             const pool = await sql.connect(sqlConfig)
             const results = await pool
                 .request()
-                .input('pOwner', sql.UniqueIdentifier, userId)
+                .input('pUserId', sql.UniqueIdentifier, userId)
                 .input('pName', sql.VarChar(255), name)
-                .query('INSERT INTO [Room](Owner, Name) OUTPUT inserted.ID VALUES(@pOwner, @pName)')
+                .query('INSERT INTO [Room](Owner, Name) OUTPUT inserted.ID VALUES(@pUserId, @pName)')
             console.log(`Added room '${results.recordset[0].ID}' to the database.`)
             return results.recordset[0].ID as string
         } catch (error: any) {
