@@ -3,9 +3,9 @@
 import { useSession } from 'next-auth/react'
 import { useState } from 'react'
 import { Loader2 } from 'lucide-react'
-import LoginForm from './components/loginform'
-import RegistrationForm from './components/registrationform'
-import Chat from './components/chat'
+import LoginForm from './forms/loginform'
+import RegistrationForm from './forms/registrationform'
+import Chat from './chat/chat'
 
 enum AuthTabs {
     Login,
@@ -25,7 +25,7 @@ export default function Home() {
     if (status === 'loading') {
         return (
             <div className="flex items-center justify-center w-screen h-screen">
-                <Loader2 className="text-emerald-700 animate-spin" size={64} />
+                <Loader2 className="text-primary animate-spin" size={64} />
             </div>
         )
     }

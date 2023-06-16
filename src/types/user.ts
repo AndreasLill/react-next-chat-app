@@ -4,5 +4,5 @@ export type User = {
     id: string
     email: string
     name: string
-    rooms: Room[]
+    rooms?: Room[]
 }

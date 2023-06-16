@@ -4,12 +4,9 @@
 
 @layer base {
     body {
-        @apply bg-neutral-200;
-        @apply dark:bg-neutral-900;
-        @apply text-black;
-        @apply dark:text-white;
-    }
-    input {
-        @apply text-black;
+        @apply bg-background;
+        @apply dark:bg-background-dark;
+        @apply text-on-surface;
+        @apply dark:text-on-surface-dark;
     }
 }
