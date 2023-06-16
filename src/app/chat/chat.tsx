@@ -1,6 +1,6 @@
 import { User } from '@/types/user'
 import { Room } from '@/types/room'
-import { Plus, LogOut, MessageCircle, UserCircle, MoreVertical, X } from 'lucide-react'
+import { Plus, LogOut, MessageSquare, UserCircle, MoreVertical, X } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 import useSWR from 'swr'
@@ -45,7 +45,7 @@ export default function Chat() {
                         {user?.rooms?.map((room: Room) => (
                             <ButtonToggle
                                 key={room.id}
-                                icon={<MessageCircle size={20} />}
+                                icon={<MessageSquare size={20} />}
                                 text={room.name}
                                 toggled={room.id === activeRoom}
                                 onClick={() => setActiveRoom(room.id)}
