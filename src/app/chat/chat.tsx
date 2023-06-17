@@ -1,13 +1,14 @@
 import { User } from '@/types/user'
 import { Room } from '@/types/room'
-import { Plus, LogOut, UserCircle, MoreVertical, X } from 'lucide-react'
+import { LogOut, UserCircle, MoreVertical, X } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 import useSWR from 'swr'
 import ButtonGhost from '@/components/button-ghost'
-import ButtonFilled from '@/components/button-filled'
 import Input from '@/components/input'
 import RoomToggle from './room-toggle'
+import DialogRoomCreate from './dialog-room-create'
+import ButtonIcon from '@/components/button-icon'
 
 const fetcher = (url: string) => fetch(url, { method: 'GET' }).then((res: Response) => res.json())
 
@@ -37,11 +38,11 @@ export default function Chat() {
                         <UserCircle className="m-3" size={24} />
                         <h1 className="text-center font-semibold text-sm">{user?.name}</h1>
                     </div>
-                    <ButtonGhost className="justify-end" icon={<LogOut size={24} />} onClick={() => signOut()} />
+                    <ButtonIcon className="justify-end" icon={<LogOut size={24} />} onClick={() => signOut()} />
                 </div>
-                <div className="flex flex-grow flex-col p-6 bg-white dark:bg-zinc-900 rounded-lg shadow space-y-6">
-                    <ButtonFilled icon={<Plus size={20} />} text="Create Room" onClick={() => {}} />
-                    <ul className="flex flex-col space-y-1 overflow-scroll">
+                <div className="flex flex-grow flex-col p-6 bg-white dark:bg-zinc-900 rounded-lg shadow space-y-6 overflow-hidden">
+                    <DialogRoomCreate onCreate={(value) => onCreateRoom(value)} />
+                    <ul className="flex flex-grow flex-col space-y-1 overflow-scroll">
                         {user?.rooms?.map((room: Room) => (
                             <RoomToggle
                                 key={room.id}
@@ -60,8 +61,7 @@ export default function Chat() {
                         <p className="text-sm">{roomStatus}</p>
                     </div>
                     <div className="flex justify-end space-x-2">
-                        <ButtonGhost icon={<X size={24} />} onClick={() => {}} />
-                        <ButtonGhost icon={<MoreVertical size={24} />} onClick={() => {}} />
+                        <ButtonIcon icon={<MoreVertical size={24} />} onClick={() => {}} />
                     </div>
                 </div>
                 <div className="flex flex-grow flex-col space-y-6 p-6 mx-6 overflow-scroll">

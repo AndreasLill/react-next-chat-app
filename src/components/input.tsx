@@ -1,7 +1,10 @@
+import { AlertTriangle } from 'lucide-react'
+
 interface Props {
     id: string
     type: 'text' | 'password'
     label?: string
+    error?: string
     placeholder?: string
     className?: string
     value: string
@@ -12,7 +15,7 @@ export default function Input(props: Props) {
     return (
         <div>
             {props.label && (
-                <label htmlFor={props.id} className="block text-sm">
+                <label htmlFor={props.id} className="block mb-2 text-sm">
                     {props.label}
                 </label>
             )}
@@ -20,10 +23,18 @@ export default function Input(props: Props) {
                 id={props.id}
                 type={props.type}
                 placeholder={props.placeholder}
-                className={`${props.className} px-3 py-2 mt-2 border rounded-md border-black/20 dark:border-white/20 bg-slate-100 dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:outline-offset-0 focus:outline-rose-500`}
+                className={`${props.className} ${
+                    props.error ? 'border-red-500' : ''
+                } px-3 py-2 border rounded-md border-black/20 dark:border-white/20 bg-slate-100 dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:outline-offset-0 focus:outline-rose-500`}
                 value={props.value}
                 onChange={(e) => props.onChange(e.target.value)}
             />
+            {props.error && (
+                <div className="flex items-center mt-2 mx-2 space-x-1 text-sm italic text-red-500 dark:text-red-400">
+                    <AlertTriangle size={18} />
+                    <span>{props.error}</span>
+                </div>
+            )}
         </div>
     )
 }
