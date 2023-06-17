@@ -33,7 +33,7 @@ export default function LoginForm(props: Props) {
 
     return (
         <div className="flex flex-col items-center mx-auto max-w-7xl px-8 py-24">
-            <form className="flex flex-col w-96 p-8 bg-surface dark:bg-surface-dark rounded-lg shadow space-y-8" onSubmit={onLogin}>
+            <form className="flex flex-col w-96 p-8 bg-white dark:bg-zinc-900 rounded-lg shadow space-y-8" onSubmit={onLogin}>
                 <h1 className="text-center font-bold text-xl">Log in to your account</h1>
                 <div className="flex flex-col space-y-2">
                     <Input

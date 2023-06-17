@@ -25,7 +25,7 @@ export default function Home() {
     if (status === 'loading') {
         return (
             <div className="flex items-center justify-center w-screen h-screen">
-                <Loader2 className="text-primary animate-spin" size={64} />
+                <Loader2 className="text-rose-500 animate-spin" size={64} />
             </div>
         )
     }

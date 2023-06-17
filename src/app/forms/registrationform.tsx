@@ -41,7 +41,7 @@ export default function RegistrationForm(props: Props) {
     if (success) {
         return (
             <div className="flex flex-col items-center mx-auto max-w-5xl px-8 py-24">
-                <div className="flex flex-col w-96 p-8 bg-surface dark:bg-surface-dark rounded-lg shadow space-y-8">
+                <div className="flex flex-col w-96 p-8 bg-white dark:bg-zinc-900 rounded-lg shadow space-y-8">
                     <div>
                         <h1 className="text-center text-xl">Welcome!</h1>
                         <p className="mt-4 text-center text-sm">Your account has been created.</p>
@@ -54,7 +54,7 @@ export default function RegistrationForm(props: Props) {
 
     return (
         <div className="flex flex-col items-center mx-auto max-w-7xl px-8 py-24">
-            <form className="flex flex-col w-96 p-8 bg-surface dark:bg-surface-dark rounded-lg shadow space-y-8" onSubmit={onRegister}>
+            <form className="flex flex-col w-96 p-8 bg-white dark:bg-zinc-900 rounded-lg shadow space-y-8" onSubmit={onRegister}>
                 <h1 className="text-center font-bold text-xl">Create a new account</h1>
                 <div className="flex flex-col space-y-2">
                     <Input
@@ -93,7 +93,7 @@ export default function RegistrationForm(props: Props) {
                 />
                 <div className="flex flex-col w-full items-center">
                     <p className="text-center text-sm">Already have an account?</p>
-                    <ButtonText text="Create Account" onClick={props.onChangeToLogin} />
+                    <ButtonText text="Log In" onClick={props.onChangeToLogin} />
                 </div>
             </form>
             {error && (

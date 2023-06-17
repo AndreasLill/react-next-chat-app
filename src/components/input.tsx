@@ -20,7 +20,7 @@ export default function Input(props: Props) {
                 id={props.id}
                 type={props.type}
                 placeholder={props.placeholder}
-                className={`${props.className} px-3 py-2 mt-2 border rounded-md border-on-surface/20 dark:border-on-surface-dark/20 bg-background dark:bg-background-dark text-on-surface dark:text-on-surface-dark focus:outline-none focus:outline-offset-0 focus:outline-primary`}
+                className={`${props.className} px-3 py-2 mt-2 border rounded-md border-black/20 dark:border-white/20 bg-slate-100 dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:outline-offset-0 focus:outline-rose-500`}
                 value={props.value}
                 onChange={(e) => props.onChange(e.target.value)}
             />

@@ -4,9 +4,9 @@
 
 @layer base {
     body {
-        @apply bg-background;
-        @apply dark:bg-background-dark;
-        @apply text-on-surface;
-        @apply dark:text-on-surface-dark;
+        @apply bg-slate-100;
+        @apply dark:bg-zinc-950;
+        @apply text-black;
+        @apply dark:text-white;
     }
 }
