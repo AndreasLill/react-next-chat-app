@@ -24,8 +24,8 @@ export default function Input(props: Props) {
                 type={props.type}
                 placeholder={props.placeholder}
                 className={`${props.className} ${
-                    props.error ? 'border-red-500' : ''
-                } px-3 py-2 border rounded-md border-black/20 dark:border-white/20 bg-slate-100 dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:outline-offset-0 focus:outline-rose-500`}
+                    props.error ? 'border-red-500 dark:text-red-400' : 'border-black/20 dark:border-white/20'
+                } px-3 py-2 border rounded-md bg-slate-100 dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:outline-offset-0 focus:outline-rose-500`}
                 value={props.value}
                 onChange={(e) => props.onChange(e.target.value)}
             />

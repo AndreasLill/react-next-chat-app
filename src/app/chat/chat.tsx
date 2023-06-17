@@ -1,14 +1,14 @@
 import { User } from '@/types/user'
 import { Room } from '@/types/room'
-import { LogOut, UserCircle, MoreVertical, X } from 'lucide-react'
+import { LogOut, UserCircle, MoreVertical, Plus, Link2 } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 import useSWR from 'swr'
-import ButtonGhost from '@/components/button-ghost'
 import Input from '@/components/input'
 import RoomToggle from './room-toggle'
-import DialogRoomCreate from './dialog-room-create'
+import DialogRoomCreate from './dialog/dialog-room-create'
 import ButtonIcon from '@/components/button-icon'
+import DialogRoomJoin from './dialog/dialog-room-join'
 
 const fetcher = (url: string) => fetch(url, { method: 'GET' }).then((res: Response) => res.json())
 
@@ -26,6 +26,10 @@ export default function Chat() {
         console.log(response)
     }
 
+    async function onJoinRoom(id: string) {
+        console.log(id)
+    }
+
     useEffect(() => {
         console.log(user)
     }, [user])
@@ -36,12 +40,21 @@ export default function Chat() {
                 <div className="flex justify-between items-center p-6 bg-white dark:bg-zinc-900 rounded-lg shadow">
                     <div className="flex items-center">
                         <UserCircle className="m-3" size={24} />
-                        <h1 className="text-center font-semibold text-sm">{user?.name}</h1>
+                        <h1 className="text-center font-semibold">{user?.name}</h1>
                     </div>
-                    <ButtonIcon className="justify-end" icon={<LogOut size={24} />} onClick={() => signOut()} />
+                    <ButtonIcon className="justify-end" tooltip="Log Out" icon={<LogOut size={24} />} onClick={() => signOut()} />
                 </div>
                 <div className="flex flex-grow flex-col p-6 bg-white dark:bg-zinc-900 rounded-lg shadow space-y-6 overflow-hidden">
-                    <DialogRoomCreate onCreate={(value) => onCreateRoom(value)} />
+                    <div className="flex space-x-2">
+                        <DialogRoomCreate
+                            trigger={<ButtonIcon className="w-fit" tooltip="Create Room" icon={<Plus size={24} />} />}
+                            onSubmit={(value) => onCreateRoom(value)}
+                        />
+                        <DialogRoomJoin
+                            trigger={<ButtonIcon className="w-fit" tooltip="Join Room" icon={<Link2 size={24} />} />}
+                            onSubmit={(value) => onJoinRoom(value)}
+                        />
+                    </div>
                     <ul className="flex flex-grow flex-col space-y-1 overflow-scroll">
                         {user?.rooms?.map((room: Room) => (
                             <RoomToggle
@@ -61,7 +74,7 @@ export default function Chat() {
                         <p className="text-sm">{roomStatus}</p>
                     </div>
                     <div className="flex justify-end space-x-2">
-                        <ButtonIcon icon={<MoreVertical size={24} />} onClick={() => {}} />
+                        <ButtonIcon tooltip="Options" icon={<MoreVertical size={24} />} onClick={() => {}} />
                     </div>
                 </div>
                 <div className="flex flex-grow flex-col space-y-6 p-6 mx-6 overflow-scroll">
