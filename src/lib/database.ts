@@ -1,6 +1,5 @@
 import { hashCompare, hashPass } from './crypt'
 import { SessionUser } from '@/types/auth'
-import { Room } from '@/types/room'
 import { User } from '@/types/user'
 
 const sql = require('mssql')
@@ -93,7 +92,7 @@ export default class AppDatabase {
             const pool = await sql.connect(sqlConfig)
             const results = await pool.request().input('pUserId', sql.UniqueIdentifier, userId)
                 .query(`SELECT ID AS 'id', Email AS 'email', Name AS 'name',
-                (SELECT ID AS 'id', Name AS 'name' FROM [dbo].[Room] AS r WHERE Owner = [User].ID FOR JSON PATH) as 'rooms'
+                (SELECT r.ID AS 'id', r.Name AS 'name', rj.Role AS 'role' FROM [dbo].[Room] AS r JOIN [dbo].[RoomJoin] as rj ON r.ID = rj.RoomID WHERE rj.UserID = [User].ID FOR JSON PATH) as 'rooms'
                 FROM [dbo].[User]
                 WHERE ID = @pUserId
                 FOR JSON PATH, WITHOUT_ARRAY_WRAPPER`)
@@ -104,16 +103,38 @@ export default class AppDatabase {
         }
     }
 
+    // OUTPUT inserted.ID
     static async addRoom(userId: string, name: string) {
         try {
             const pool = await sql.connect(sqlConfig)
             const results = await pool
                 .request()
-                .input('pUserId', sql.UniqueIdentifier, userId)
-                .input('pName', sql.VarChar(255), name)
-                .query('INSERT INTO [Room](Owner, Name) OUTPUT inserted.ID VALUES(@pUserId, @pName)')
+                .input('UserId', sql.UniqueIdentifier, userId)
+                .input('RoomName', sql.VarChar(255), name)
+                .execute('[dbo].[CreateRoom]')
             console.log(`Added room '${results.recordset[0].ID}' to the database.`)
             return results.recordset[0].ID as string
+        } catch (error: any) {
+            console.error(error)
+            throw new Error(error)
+        }
+    }
+
+    static async joinRoom(userId: string, roomId: string) {
+        try {
+            const pool = await sql.connect(sqlConfig)
+            const results = await pool
+                .request()
+                .input('UserId', sql.UniqueIdentifier, userId)
+                .input('RoomId', sql.UniqueIdentifier, roomId)
+                .execute('[dbo].[JoinRoom]')
+
+            if (results.recordset[0].ErrorMessage) {
+                console.error(`${results.recordset[0].ErrorCode} : ${results.recordset[0].ErrorMessage}`)
+            } else {
+                console.log(`User ${userId} joined room ${roomId}.`)
+            }
+            return results.recordset[0]
         } catch (error: any) {
             console.error(error)
             throw new Error(error)

@@ -21,7 +21,7 @@ export default function RegistrationForm(props: Props) {
         setError('')
         setLoading(true)
 
-        const response = await fetch('/api/user', {
+        const response = await fetch('/api/user/add', {
             method: 'POST',
             body: JSON.stringify({
                 name: name,

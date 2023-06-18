@@ -4,6 +4,7 @@ import { LogOut, UserCircle, MoreVertical, Plus, Link2 } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 import useSWR from 'swr'
+import { mutate } from 'swr'
 import Input from '@/components/input'
 import RoomToggle from './room-toggle'
 import DialogRoomCreate from './dialog/dialog-room-create'
@@ -13,21 +14,38 @@ import DialogRoomJoin from './dialog/dialog-room-join'
 const fetcher = (url: string) => fetch(url, { method: 'GET' }).then((res: Response) => res.json())
 
 export default function Chat() {
-    const { data: user } = useSWR<User>('/api/user', fetcher)
+    const { data: user } = useSWR<User>('/api/user/get', fetcher)
     const [activeRoom, setActiveRoom] = useState<string>('No Room Selected')
     const [roomStatus, setRoomStatus] = useState<string>('Disconnected')
     const [message, setMessage] = useState<string>('')
 
     async function onCreateRoom(name: string) {
-        const response = await fetch('/api/room', {
+        const response = await fetch('/api/room/add', {
             method: 'POST',
             body: JSON.stringify({ name: name })
         }).then((res: Response) => res)
+
         console.log(response)
+        // Revalidate cache to fetch new data.
+        // TODO: Change later to mutate data in cache.
+        mutate('/api/user/get').then(() => {
+            console.log('Room was created.')
+        })
     }
 
     async function onJoinRoom(id: string) {
-        console.log(id)
+        const response = await fetch('/api/room/join', {
+            method: 'POST',
+            body: JSON.stringify({ id: id })
+        }).then((res: Response) => res)
+
+        console.log(response)
+        // Revalidate cache to fetch new data.
+        // TODO: Change later to mutate data in cache.
+        mutate('/api/user/get').then(() => {
+            setActiveRoom(id)
+            console.log('Joined the room.')
+        })
     }
 
     useEffect(() => {

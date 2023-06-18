@@ -2,7 +2,7 @@ import { authOptions } from '@/lib/auth'
 import { getServerSession } from 'next-auth'
 import AppDatabase from '@/lib/database'
 
-// POST Request to add a new room.
+// Add a new room to the database with session user as owner and return the id.
 export async function POST(req: Request) {
     const body = await req.json()
     const session = await getServerSession(authOptions)

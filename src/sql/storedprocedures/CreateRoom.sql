@@ -1,0 +1,15 @@
+CREATE PROCEDURE [dbo].[CreateRoom]
+	@UserId UNIQUEIDENTIFIER,
+	@RoomName NVARCHAR(64)
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	DECLARE @RoomId UNIQUEIDENTIFIER = newid()
+
+	INSERT INTO [Room](ID, Name) VALUES(@RoomId, @RoomName)
+	INSERT INTO [RoomJoin](RoomID, UserID, Role) VALUES(@RoomId, @UserId, 0)
+
+	SELECT @RoomId AS 'ID'
+END
+GO

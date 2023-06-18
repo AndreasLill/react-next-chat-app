@@ -1,5 +1,5 @@
 export type Room = {
     id: string
-    owner: string
+    created: string
     name: string
 }
