@@ -82,7 +82,7 @@ export default function Chat() {
                         </Tooltip>
                         <DialogRoomJoin state={dialogJoinRoom} setState={setDialogJoinRoom} onSubmit={(value) => onJoinRoom(value)} />
                     </div>
-                    <ul className="flex flex-grow flex-col space-y-1 overflow-scroll">
+                    <ul className="flex flex-grow flex-col space-y-2 overflow-scroll">
                         {user?.rooms?.map((room: Room) => (
                             <RoomToggle
                                 key={room.id}
