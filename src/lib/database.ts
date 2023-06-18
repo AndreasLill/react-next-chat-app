@@ -51,36 +51,23 @@ export default class AppDatabase {
         }
     }
 
-    static async existsUser(email: string) {
-        try {
-            const pool = await sql.connect(sqlConfig)
-            const results = await pool
-                .request()
-                .input('pEmail', sql.VarChar(255), email)
-                .query('SELECT COUNT(*) as count FROM [User] WHERE Email = @pEmail')
-
-            const exists = results.recordset[0].count !== 0
-            if (exists) {
-                console.log(`User '${email}' already exists.`)
-            }
-            return exists
-        } catch (error: any) {
-            console.error(error)
-            throw new Error(error)
-        }
-    }
-
     static async addUser(name: string, email: string, password: string) {
         try {
             const hashedPass = await hashPass(password)
             const pool = await sql.connect(sqlConfig)
-            await pool
+            const results = await pool
                 .request()
-                .input('pName', sql.NVarChar(32), name)
-                .input('pPassword', sql.VarChar(60), hashedPass)
-                .input('pEmail', sql.VarChar(255), email)
-                .query('INSERT INTO [User](Name, Password, Email) VALUES(@pName, @pPassword, @pEmail)')
-            console.log(`Added user '${email}' to the database.`)
+                .input('Email', sql.VarChar(255), email)
+                .input('Password', sql.VarChar(60), hashedPass)
+                .input('Name', sql.NVarChar(32), name)
+                .execute('[dbo].[CreateUser]')
+
+            if (results.recordset[0].ErrorMessage) {
+                console.error(`${results.recordset[0].ErrorCode} : ${results.recordset[0].ErrorMessage}`)
+            } else {
+                console.log(`Added user '${email}' to the database.`)
+            }
+            return results.recordset[0]
         } catch (error: any) {
             console.error(error)
             throw new Error(error)
@@ -103,7 +90,6 @@ export default class AppDatabase {
         }
     }
 
-    // OUTPUT inserted.ID
     static async addRoom(userId: string, name: string) {
         try {
             const pool = await sql.connect(sqlConfig)

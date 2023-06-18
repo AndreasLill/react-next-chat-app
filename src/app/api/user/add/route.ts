@@ -9,18 +9,14 @@ export async function POST(req: Request) {
         return new Response(null, { status: 400, statusText: 'Please fill in all required fields.' })
     }
 
-    // Check if email is taken.
-    try {
-        if (await AppDatabase.existsUser(body.email)) {
-            return new Response(null, { status: 400, statusText: 'This email is already taken.' })
-        }
-    } catch (error) {
-        return new Response(null, { status: 500, statusText: 'There was a connection error.' })
-    }
-
     // Add user to database.
     try {
-        await AppDatabase.addUser(body.name, body.email, body.password)
+        const results = await AppDatabase.addUser(body.name, body.email, body.password)
+
+        if (results.ErrorCode == 2627) {
+            return new Response(null, { status: 400, statusText: 'A user with this email already exists.' })
+        }
+
         return new Response(null, { status: 200 })
     } catch (error) {
         return new Response(null, { status: 500, statusText: 'There was a connection error.' })
