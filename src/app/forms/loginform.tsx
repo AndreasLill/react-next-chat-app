@@ -68,8 +68,8 @@ export default function LoginForm(props: Props) {
             </form>
             {error && (
                 <div className="flex p-6 space-x-2 items-center">
-                    <AlertCircle className="text-error dark:text-error-dark" size={20} />
-                    <p className="text-error dark:text-error-dark">{error}</p>
+                    <AlertCircle className="text-red-500 dark:text-red-400" size={20} />
+                    <p className="text-red-500 dark:text-red-400">{error}</p>
                 </div>
             )}
         </div>

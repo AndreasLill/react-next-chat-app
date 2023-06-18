@@ -1,16 +1,16 @@
 import * as Dialog from '@radix-ui/react-dialog'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Dispatch, SetStateAction } from 'react'
 import ButtonFilled from '@/components/button-filled'
 import Input from '@/components/input'
 import ButtonGhost from '@/components/button-ghost'
 
 interface Props {
-    trigger: JSX.Element
+    state: boolean
+    setState: Dispatch<SetStateAction<boolean>>
     onSubmit: (value: string) => void
 }
 
 export default function DialogRoomJoin(props: Props) {
-    const [open, setOpen] = useState<boolean>(false)
     const [id, setId] = useState<string>('')
     const [error, setError] = useState<string>('')
 
@@ -30,12 +30,11 @@ export default function DialogRoomJoin(props: Props) {
         }
 
         props.onSubmit(id)
-        setOpen(false)
+        props.setState(false)
     }
 
     return (
-        <Dialog.Root open={open} onOpenChange={setOpen}>
-            <Dialog.Trigger asChild>{props.trigger}</Dialog.Trigger>
+        <Dialog.Root open={props.state} onOpenChange={props.setState}>
             <Dialog.Portal>
                 <Dialog.Overlay className="fixed inset-0 bg-black/80 transition-all" />
                 <Dialog.Content className="fixed w-96 max-w-lg max-h-96 translate-x-[-50%] translate-y-[-50%] top-[50%] left-[50%] rounded-lg bg-white dark:bg-zinc-900 p-8 transition-all">
@@ -51,7 +50,7 @@ export default function DialogRoomJoin(props: Props) {
                             onChange={(e) => setId(e)}
                         />
                         <div className="mt-8 flex space-x-4 justify-end">
-                            <ButtonGhost type="button" text="Cancel" onClick={() => setOpen(false)} />
+                            <ButtonGhost text="Cancel" onClick={() => props.setState(false)} />
                             <ButtonFilled type="submit" text="Join" />
                         </div>
                     </form>

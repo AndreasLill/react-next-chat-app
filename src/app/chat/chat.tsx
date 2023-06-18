@@ -10,6 +10,7 @@ import RoomToggle from './room-toggle'
 import DialogRoomCreate from './dialog/dialog-room-create'
 import ButtonIcon from '@/components/button-icon'
 import DialogRoomJoin from './dialog/dialog-room-join'
+import Tooltip from '@/components/tooltip'
 
 const fetcher = (url: string) => fetch(url, { method: 'GET' }).then((res: Response) => res.json())
 
@@ -18,6 +19,8 @@ export default function Chat() {
     const [activeRoom, setActiveRoom] = useState<string>('No Room Selected')
     const [roomStatus, setRoomStatus] = useState<string>('Disconnected')
     const [message, setMessage] = useState<string>('')
+    const [dialogCreateRoom, setDialogCreateRoom] = useState<boolean>(false)
+    const [dialogJoinRoom, setDialogJoinRoom] = useState<boolean>(false)
 
     async function onCreateRoom(name: string) {
         const response = await fetch('/api/room/add', {
@@ -60,18 +63,24 @@ export default function Chat() {
                         <UserCircle className="m-3" size={24} />
                         <h1 className="text-center font-semibold">{user?.name}</h1>
                     </div>
-                    <ButtonIcon className="justify-end" tooltip="Log Out" icon={<LogOut size={24} />} onClick={() => signOut()} />
+                    <Tooltip text="Log Out">
+                        <ButtonIcon icon={<LogOut size={24} />} onClick={() => signOut()} />
+                    </Tooltip>
                 </div>
                 <div className="flex flex-grow flex-col p-6 bg-white dark:bg-zinc-900 rounded-lg shadow space-y-6 overflow-hidden">
                     <div className="flex space-x-2">
+                        <Tooltip text="Create Room">
+                            <ButtonIcon icon={<Plus size={24} />} onClick={() => setDialogCreateRoom(true)} />
+                        </Tooltip>
                         <DialogRoomCreate
-                            trigger={<ButtonIcon className="w-fit" tooltip="Create Room" icon={<Plus size={24} />} />}
+                            state={dialogCreateRoom}
+                            setState={setDialogCreateRoom}
                             onSubmit={(value) => onCreateRoom(value)}
                         />
-                        <DialogRoomJoin
-                            trigger={<ButtonIcon className="w-fit" tooltip="Join Room" icon={<Link2 size={24} />} />}
-                            onSubmit={(value) => onJoinRoom(value)}
-                        />
+                        <Tooltip text="Join Room">
+                            <ButtonIcon icon={<Link2 size={24} />} onClick={() => setDialogJoinRoom(true)} />
+                        </Tooltip>
+                        <DialogRoomJoin state={dialogJoinRoom} setState={setDialogJoinRoom} onSubmit={(value) => onJoinRoom(value)} />
                     </div>
                     <ul className="flex flex-grow flex-col space-y-1 overflow-scroll">
                         {user?.rooms?.map((room: Room) => (
@@ -91,8 +100,10 @@ export default function Chat() {
                         <p className="text-sm">{activeRoom}</p>
                         <p className="text-sm">{roomStatus}</p>
                     </div>
-                    <div className="flex justify-end space-x-2">
-                        <ButtonIcon tooltip="Options" icon={<MoreVertical size={24} />} onClick={() => {}} />
+                    <div className="flex">
+                        <Tooltip text="Options">
+                            <ButtonIcon icon={<MoreVertical />} onClick={() => {}} />
+                        </Tooltip>
                     </div>
                 </div>
                 <div className="flex flex-grow flex-col space-y-6 p-6 mx-6 overflow-scroll">
