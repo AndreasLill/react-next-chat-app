@@ -9,8 +9,8 @@ interface Props {
 export default function RoomToggle(props: Props) {
     return (
         <li
-            className={`${props.className} p-3 cursor-pointer select-none rounded-xl text-sm font-semibold ${
-                props.toggled ? 'text-rose-500 bg-slate-200 dark:bg-zinc-950' : 'text-black dark:text-white'
+            className={`${props.className} p-3 cursor-pointer select-none rounded-xl text-sm font-semibold border-2 ${
+                props.toggled ? 'text-rose-500 border-rose-500' : 'text-black dark:text-white border-transparent'
             } hover:text-rose-500 transition-all`}
             onClick={props.onClick}
         >
