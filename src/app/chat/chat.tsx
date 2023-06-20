@@ -11,17 +11,13 @@ import DialogRoomCreate from './dialog/dialog-room-create'
 import ButtonIcon from '@/components/button-icon'
 import DialogRoomJoin from './dialog/dialog-room-join'
 import Tooltip from '@/components/tooltip'
-import Pusher from 'pusher-js'
-import { Options } from 'pusher-js'
 import { Message } from '@/types/message'
+import Pusher, { Options } from 'pusher-js'
+import { PusherLogger } from '@/utils/logging'
+
+Pusher.log = PusherLogger
 
 const fetcher = (url: string) => fetch(url, { method: 'GET' }).then((res: Response) => res.json())
-const pusher = new Pusher(
-    process.env.NEXT_PUBLIC_PUSHER_KEY as string,
-    {
-        cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER
-    } as Options
-)
 
 export default function Chat() {
     const { data: user } = useSWR<User>('/api/user/get', fetcher)
@@ -30,6 +26,7 @@ export default function Chat() {
     const [input, setInput] = useState<string>('')
     const [dialogCreateRoom, setDialogCreateRoom] = useState<boolean>(false)
     const [dialogJoinRoom, setDialogJoinRoom] = useState<boolean>(false)
+    const [pusherClient, setPusherClient] = useState<Pusher>()
 
     async function onCreateRoom(name: string) {
         const response = await fetch('/api/room/add', {
@@ -60,31 +57,75 @@ export default function Chat() {
         })
     }
 
-    async function onConnectToRoom(id: string) {
-        if (activeRoom) {
-            // Disconnect the current active room.
-            pusher.unsubscribe(activeRoom)
-            console.log(`Pusher unsubscribed from room ${activeRoom}.`)
-
-            if (activeRoom === id) {
-                // The new room is the same as previous room, so just return.
-                setActiveRoom('')
-                return
-            }
-        }
-        const channel = pusher.subscribe(id)
-        channel.bind('message', onReceiveMessage)
-        console.log(`Pusher subscribed to room ${id}.`)
-        setActiveRoom(id)
+    async function onConnectToRoom(roomId: string) {
+        // Reset shown messages.
+        setMessages([])
+        setActiveRoom(roomId)
     }
 
-    async function onReceiveMessage(data: any) {
-        console.log(`Pusher: ${data}`)
+    function onReceiveMessage(message: any, roomId: string, activeId: string) {
+        console.log(`Message: ${message}`)
+        if (activeId === roomId) {
+            setMessages((current) => [
+                ...current,
+                { id: Math.random().toString(), room: roomId, user: user?.id, sent: 'time', text: message } as Message
+            ])
+        }
     }
 
     useEffect(() => {
-        console.log(user)
-    }, [user])
+        setPusherClient(
+            new Pusher(
+                process.env.NEXT_PUBLIC_PUSHER_KEY as string,
+                {
+                    activityTimeout: 30000,
+                    pongTimeout: 15000,
+                    cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER
+                } as Options
+            )
+        )
+        // Unsubscribe, unbind and disconnect on unmount.
+        return () => {
+            pusherClient?.allChannels().forEach((channel) => {
+                channel.unsubscribe()
+                channel.unbind('message')
+            })
+            pusherClient?.disconnect()
+            console.log('unmounted pusher client.')
+        }
+    }, [])
+
+    useEffect(() => {
+        // Subscribe to all rooms when rooms change.
+        user?.rooms?.forEach((room) => {
+            const channel = pusherClient?.subscribe(room.id)
+            channel?.bind('message', (data: any) => onReceiveMessage(data, channel.name, activeRoom))
+            console.log(`Subscribed to room ${room.id}`)
+        })
+        // Clean up old subscriptions and bindings.
+        return () => {
+            pusherClient?.allChannels().forEach((channel) => {
+                channel.unsubscribe()
+                channel.unbind('message')
+            })
+            console.log(`Unmounted room subscriptions.`)
+        }
+    }, [user?.rooms])
+
+    useEffect(() => {
+        // Rebind all channels after changing active room.
+        pusherClient?.allChannels().forEach((channel) => {
+            channel.bind('message', (data: any) => onReceiveMessage(data, channel.name, activeRoom))
+            console.log(`Rebinded room ${channel.name}`)
+        })
+        // Clean up old bindings.
+        return () => {
+            pusherClient?.allChannels().forEach((channel) => {
+                channel.unbind('message')
+            })
+            console.log(`Unmounted room bindings.`)
+        }
+    }, [activeRoom])
 
     return (
         <div className="flex mx-auto max-w-[96rem] h-screen px-8 py-24 space-x-4">
