@@ -1,131 +1,20 @@
-import { User } from '@/types/user'
 import { Room } from '@/types/room'
 import { LogOut, UserCircle, MoreVertical, Plus, Link2 } from 'lucide-react'
 import { signOut } from 'next-auth/react'
-import { useEffect, useState } from 'react'
-import useSWR from 'swr'
-import { mutate } from 'swr'
+import { useState } from 'react'
 import Input from '@/components/input'
 import RoomToggle from './room-toggle'
 import DialogRoomCreate from './dialog/dialog-room-create'
 import ButtonIcon from '@/components/button-icon'
 import DialogRoomJoin from './dialog/dialog-room-join'
 import Tooltip from '@/components/tooltip'
-import { Message } from '@/types/message'
-import Pusher, { Options } from 'pusher-js'
-import { PusherLogger } from '@/utils/logging'
-
-Pusher.log = PusherLogger
-
-const fetcher = (url: string) => fetch(url, { method: 'GET' }).then((res: Response) => res.json())
+import chatViewModel from './chat-viewmodel'
 
 export default function Chat() {
-    const { data: user } = useSWR<User>('/api/user/get', fetcher)
-    const [activeRoom, setActiveRoom] = useState<string>('')
-    const [messages, setMessages] = useState<Message[]>([])
+    const { user, currentRoom, messages, onCreateRoom, onJoinRoom, onConnectToRoom } = chatViewModel()
     const [input, setInput] = useState<string>('')
     const [dialogCreateRoom, setDialogCreateRoom] = useState<boolean>(false)
     const [dialogJoinRoom, setDialogJoinRoom] = useState<boolean>(false)
-    const [pusherClient, setPusherClient] = useState<Pusher>()
-
-    async function onCreateRoom(name: string) {
-        const response = await fetch('/api/room/add', {
-            method: 'POST',
-            body: JSON.stringify({ name: name })
-        }).then((res: Response) => res)
-        const id = await response.json()
-        console.log(response)
-        // Revalidate cache to fetch new data.
-        // TODO: Change later to mutate data in cache.
-        mutate('/api/user/get').then(() => {
-            console.log(`Room ${id} was created.`)
-        })
-    }
-
-    async function onJoinRoom(id: string) {
-        const response = await fetch('/api/room/join', {
-            method: 'POST',
-            body: JSON.stringify({ id: id })
-        }).then((res: Response) => res)
-
-        console.log(response)
-        // Revalidate cache to fetch new data.
-        // TODO: Change later to mutate data in cache.
-        mutate('/api/user/get').then(() => {
-            console.log(`Joined room ${id}.`)
-            onConnectToRoom(id)
-        })
-    }
-
-    async function onConnectToRoom(roomId: string) {
-        // Reset shown messages.
-        setMessages([])
-        setActiveRoom(roomId)
-    }
-
-    function onReceiveMessage(message: any, roomId: string, activeId: string) {
-        console.log(`Message: ${message}`)
-        if (activeId === roomId) {
-            setMessages((current) => [
-                ...current,
-                { id: Math.random().toString(), room: roomId, user: user?.id, sent: 'time', text: message } as Message
-            ])
-        }
-    }
-
-    useEffect(() => {
-        setPusherClient(
-            new Pusher(
-                process.env.NEXT_PUBLIC_PUSHER_KEY as string,
-                {
-                    activityTimeout: 30000,
-                    pongTimeout: 15000,
-                    cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER
-                } as Options
-            )
-        )
-        // Unsubscribe, unbind and disconnect on unmount.
-        return () => {
-            pusherClient?.allChannels().forEach((channel) => {
-                channel.unsubscribe()
-                channel.unbind('message')
-            })
-            pusherClient?.disconnect()
-            console.log('unmounted pusher client.')
-        }
-    }, [])
-
-    useEffect(() => {
-        // Subscribe to all rooms when rooms change.
-        user?.rooms?.forEach((room) => {
-            const channel = pusherClient?.subscribe(room.id)
-            channel?.bind('message', (data: any) => onReceiveMessage(data, channel.name, activeRoom))
-            console.log(`Subscribed to room ${room.id}`)
-        })
-        // Clean up old subscriptions and bindings.
-        return () => {
-            pusherClient?.allChannels().forEach((channel) => {
-                channel.unsubscribe()
-                channel.unbind('message')
-            })
-            console.log(`Unmounted room subscriptions.`)
-        }
-    }, [user?.rooms])
-
-    useEffect(() => {
-        // Rebind all channels after changing active room.
-        pusherClient?.allChannels().forEach((channel) => {
-            channel.bind('message', (data: any) => onReceiveMessage(data, channel.name, activeRoom))
-            console.log(`Rebinded room ${channel.name}`)
-        })
-        // Clean up old bindings.
-        return () => {
-            pusherClient?.allChannels().forEach((channel) => {
-                channel.unbind('message')
-            })
-            console.log(`Unmounted room bindings.`)
-        }
-    }, [activeRoom])
 
     return (
         <div className="flex mx-auto max-w-[96rem] h-screen px-8 py-24 space-x-4">
@@ -159,7 +48,7 @@ export default function Chat() {
                             <RoomToggle
                                 key={room.id}
                                 text={room.name}
-                                toggled={room.id === activeRoom}
+                                toggled={room.id === currentRoom}
                                 onClick={() => onConnectToRoom(room.id)}
                             />
                         ))}
@@ -168,7 +57,7 @@ export default function Chat() {
             </div>
             <div className="flex flex-col flex-1 h-full bg-white dark:bg-zinc-900 rounded-lg shadow overflow-auto">
                 <div className="flex items-center justify-between p-6">
-                    <p className="text-sm">{activeRoom}</p>
+                    <p className="text-sm">{currentRoom}</p>
                     <div className="flex">
                         <Tooltip text="Options">
                             <ButtonIcon icon={<MoreVertical />} onClick={() => {}} />
