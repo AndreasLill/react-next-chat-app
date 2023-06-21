@@ -1,5 +1,7 @@
 import { hashCompare, hashPass } from './crypt'
 import { SessionUser } from '@/types/auth'
+import { Message } from '@/types/message'
+import { SqlError } from '@/types/sqlerror'
 import { User } from '@/types/user'
 
 const sql = require('mssql')
@@ -121,6 +123,29 @@ export default class AppDatabase {
                 console.log(`User ${userId} joined room ${roomId}.`)
             }
             return results.recordset[0]
+        } catch (error: any) {
+            console.error(error)
+            throw new Error(error)
+        }
+    }
+
+    static async sendMessage(userId: string, roomId: string, text: string) {
+        try {
+            const pool = await sql.connect(sqlConfig)
+            const results = await pool
+                .request()
+                .input('UserId', sql.UniqueIdentifier, userId)
+                .input('RoomId', sql.UniqueIdentifier, roomId)
+                .input('Text', sql.NVarChar(255), text)
+                .execute('[dbo].[CreateMessage]')
+
+            if (results.recordset[0].error) {
+                const sqlError = results.recordset[0].error as SqlError
+                throw new Error(`${sqlError.code} : ${sqlError.message}`)
+            } else {
+                const message = results.recordset[0] as Message
+                return message
+            }
         } catch (error: any) {
             console.error(error)
             throw new Error(error)

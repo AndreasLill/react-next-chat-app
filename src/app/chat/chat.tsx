@@ -1,5 +1,5 @@
 import { Room } from '@/types/room'
-import { LogOut, UserCircle, MoreVertical, Plus, Link2 } from 'lucide-react'
+import { LogOut, UserCircle, MoreVertical, Plus, Link2, Send, Loader2 } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 import { useState } from 'react'
 import Input from '@/components/input'
@@ -9,9 +9,10 @@ import ButtonIcon from '@/components/button-icon'
 import DialogRoomJoin from './dialog/dialog-room-join'
 import Tooltip from '@/components/tooltip'
 import chatViewModel from './chat-viewmodel'
+import ButtonFilled from '@/components/button-filled'
 
 export default function Chat() {
-    const { user, currentRoom, messages, onCreateRoom, onJoinRoom, onConnectToRoom } = chatViewModel()
+    const { user, currentRoom, isSending, messages, onCreateRoom, onJoinRoom, onConnectToRoom, onSendMessage } = chatViewModel()
     const [input, setInput] = useState<string>('')
     const [dialogCreateRoom, setDialogCreateRoom] = useState<boolean>(false)
     const [dialogJoinRoom, setDialogJoinRoom] = useState<boolean>(false)
@@ -48,39 +49,54 @@ export default function Chat() {
                             <RoomToggle
                                 key={room.id}
                                 text={room.name}
-                                toggled={room.id === currentRoom}
-                                onClick={() => onConnectToRoom(room.id)}
+                                toggled={room.id === currentRoom?.id}
+                                onClick={() => onConnectToRoom(room)}
                             />
                         ))}
                     </ul>
                 </div>
             </div>
             <div className="flex flex-col flex-1 h-full bg-white dark:bg-zinc-900 rounded-lg shadow overflow-auto">
-                <div className="flex items-center justify-between p-6">
-                    <p className="text-sm">{currentRoom}</p>
-                    <div className="flex">
-                        <Tooltip text="Options">
-                            <ButtonIcon icon={<MoreVertical />} onClick={() => {}} />
-                        </Tooltip>
-                    </div>
+                <div className="flex items-center justify-end p-6">
+                    <Tooltip text="Options">
+                        <ButtonIcon icon={<MoreVertical />} onClick={() => {}} />
+                    </Tooltip>
                 </div>
-                <div className="flex flex-1 flex-col mx-6 bg-slate-100 dark:bg-zinc-950 border rounded-lg border-black/20 dark:border-white/20 overflow-y-scroll">
+                <div
+                    className={`flex flex-1 flex-col mx-6 p-6 space-y-4 bg-slate-100 dark:bg-zinc-950 border rounded-lg border-black/20 dark:border-white/20 overflow-y-scroll ${
+                        !currentRoom && 'cursor-not-allowed'
+                    }`}
+                >
                     {messages?.map((message) => (
-                        <p className="pt-6 px-6 break-all" key={message.id}>
-                            {`${message.user}: ${message.text}`}
-                        </p>
+                        <span key={message.id} className="break-all">{`${message.user}: ${message.text}`}</span>
                     ))}
                 </div>
-                <div className="p-6">
-                    <Input
-                        id="chat"
-                        type="text"
-                        placeholder="Message To Chat"
-                        className="w-full py-4 px-4"
-                        value={input}
-                        onChange={(e) => setInput(e)}
+                <form
+                    className="flex items-center space-x-6 p-6"
+                    onSubmit={(e) => {
+                        e.preventDefault()
+                        onSendMessage(currentRoom, input)
+                        setInput('')
+                    }}
+                >
+                    <div className="flex-grow">
+                        <Input
+                            id="chat"
+                            type="text"
+                            placeholder="Message To Chat"
+                            className="w-full py-4 px-4"
+                            disabled={!currentRoom}
+                            value={input}
+                            onChange={(e) => setInput(e)}
+                        />
+                    </div>
+                    <ButtonFilled
+                        type="submit"
+                        text="Send"
+                        icon={isSending ? <Loader2 size={24} /> : <Send size={24} />}
+                        disabled={isSending || !currentRoom}
                     />
-                </div>
+                </form>
             </div>
         </div>
     )

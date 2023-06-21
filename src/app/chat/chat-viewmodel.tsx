@@ -4,13 +4,16 @@ import { PusherLogger } from '@/utils/logging'
 import Pusher, { Options } from 'pusher-js'
 import { useEffect, useState } from 'react'
 import useSWR, { mutate } from 'swr'
+import { ApiBodyMessageSend } from '@/types/api'
+import { Room } from '@/types/room'
 
 Pusher.log = PusherLogger
 const fetcher = (url: string) => fetch(url, { method: 'GET' }).then((res: Response) => res.json())
 
 export default function chatViewModel() {
     const { data: user } = useSWR<User>('/api/user/get', fetcher)
-    const [currentRoom, setCurrentRoom] = useState<string>('')
+    const [currentRoom, setCurrentRoom] = useState<Room | null>(null)
+    const [isSending, setSending] = useState<boolean>(false)
     const [messages, setMessages] = useState<Message[]>([])
     const [pusherClient, setPusherClient] = useState<Pusher>()
 
@@ -20,7 +23,7 @@ export default function chatViewModel() {
             body: JSON.stringify({ name: name })
         }).then((res: Response) => res)
         const id = await response.json()
-        console.log(response)
+
         // Revalidate cache to fetch new data.
         // TODO: Change later to mutate data in cache.
         mutate('/api/user/get').then(() => {
@@ -34,29 +37,40 @@ export default function chatViewModel() {
             body: JSON.stringify({ id: id })
         }).then((res: Response) => res)
 
-        console.log(response)
         // Revalidate cache to fetch new data.
         // TODO: Change later to mutate data in cache.
         mutate('/api/user/get').then(() => {
             console.log(`Joined room ${id}.`)
-            onConnectToRoom(id)
+            //TODO: onConnectToRoom() on join new room.
         })
     }
 
-    async function onConnectToRoom(roomId: string) {
+    async function onConnectToRoom(room: Room) {
         // Reset shown messages.
-        setMessages([])
-        setCurrentRoom(roomId)
+        setMessages([{ id: 'server0', sent: 'now', room: room.id, user: 'Server', text: `Connected to ${room.id}.` } as Message])
+        setCurrentRoom(room)
     }
 
-    function onReceiveMessage(message: any, roomId: string, activeId: string) {
-        console.log(`Message: ${message}`)
-        if (activeId === roomId) {
-            setMessages((current) => [
-                ...current,
-                { id: Math.random().toString(), room: roomId, user: user?.id, sent: 'time', text: message } as Message
-            ])
+    async function onSendMessage(room: Room | null, text: string) {
+        if (isSending || !room || !text) {
+            return
         }
+
+        // TODO: Validate text.
+        setSending(true)
+        const response = await fetch('/api/message/send', {
+            method: 'POST',
+            body: JSON.stringify({ room: room.id, text: text } as ApiBodyMessageSend)
+        }).then((res: Response) => res)
+        setSending(false)
+    }
+
+    function onReceiveMessage(message: Message, roomId: string, activeRoom: Room | null) {
+        // Add received message to message array if the message was sent to current room.
+        if (activeRoom?.id === roomId) {
+            setMessages((current) => [...current, message])
+        }
+        // TODO: else add (number) notification to room name.
     }
 
     useEffect(() => {
@@ -116,9 +130,11 @@ export default function chatViewModel() {
     return {
         user,
         currentRoom,
+        isSending,
         messages,
         onCreateRoom,
         onJoinRoom,
-        onConnectToRoom
+        onConnectToRoom,
+        onSendMessage
     }
 }
