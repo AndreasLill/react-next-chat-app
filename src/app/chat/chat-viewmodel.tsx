@@ -46,8 +46,11 @@ export default function chatViewModel() {
     }
 
     async function onConnectToRoom(room: Room) {
-        // Reset shown messages.
-        setMessages([{ id: 'server0', sent: 'now', room: room.id, user: 'Server', text: `Connected to ${room.id}.` } as Message])
+        // TODO: Get room message history before connecting.
+        // TODO: Send a server message to subscribers without saving to database.
+        // Reset all shown messages and add server connected message.
+        const id = crypto.randomUUID().toUpperCase()
+        setMessages([{ id: `log-${id}`, sent: '', room: room.id, text: `Connected to ${room.name}.` } as Message])
         setCurrentRoom(room)
     }
 
@@ -91,7 +94,6 @@ export default function chatViewModel() {
                 channel.unbind('message')
             })
             pusherClient?.disconnect()
-            console.log('unmounted pusher client.')
         }
     }, [])
 
@@ -108,7 +110,6 @@ export default function chatViewModel() {
                 channel.unsubscribe()
                 channel.unbind('message')
             })
-            console.log(`Unmounted room subscriptions.`)
         }
     }, [user?.rooms])
 
@@ -123,7 +124,6 @@ export default function chatViewModel() {
             pusherClient?.allChannels().forEach((channel) => {
                 channel.unbind('message')
             })
-            console.log(`Unmounted room bindings.`)
         }
     }, [currentRoom])
 
