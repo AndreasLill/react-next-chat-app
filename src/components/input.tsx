@@ -24,7 +24,7 @@ export default function Input(props: Props) {
                     {props.label}
                 </label>
             )}
-            <Popover.Root open={props.error !== ''}>
+            <Popover.Root open={true}>
                 <Popover.Anchor>
                     <input
                         id={props.id}
@@ -45,22 +45,26 @@ export default function Input(props: Props) {
                     />
                 </Popover.Anchor>
                 <Popover.Portal>
-                    {props.setError && (
-                        <Popover.Content
-                            side="top"
-                            sideOffset={6}
-                            className="flex items-center space-x-2 bg-red-500/80 p-3 border-0 rounded-lg transition-all"
-                            onInteractOutside={() => {
-                                if (props.setError) {
-                                    props.setError('')
-                                }
-                            }}
-                        >
-                            <AlertTriangle size={18} />
-                            <p className="text-sm text-white">{props.error}</p>
-                            <Popover.Arrow className="fill-red-500/80" />
-                        </Popover.Content>
-                    )}
+                    <Popover.Content
+                        side="top"
+                        sideOffset={6}
+                        className={`bg-red-500/90 border-0 rounded-lg transition-opacity duration-300 z-50 ${
+                            props.error ? 'opacity-100' : 'opacity-0'
+                        }`}
+                        onInteractOutside={() => {
+                            if (props.setError) {
+                                props.setError('')
+                            }
+                        }}
+                    >
+                        {props.error && (
+                            <div className="flex items-center space-x-2 p-3">
+                                <AlertTriangle size={18} />
+                                <p className="text-sm text-white">{props.error}</p>
+                                <Popover.Arrow className="fill-red-500/90" />
+                            </div>
+                        )}
+                    </Popover.Content>
                 </Popover.Portal>
             </Popover.Root>
         </div>

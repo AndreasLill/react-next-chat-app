@@ -22,7 +22,6 @@ export default function DialogRoomJoin(props: Props) {
 
     async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
-        setError('')
 
         if (!id.match('^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$')) {
             setError('Please enter a valid room ID.')
@@ -44,6 +43,7 @@ export default function DialogRoomJoin(props: Props) {
                             id="id"
                             type="text"
                             error={error}
+                            setError={setError}
                             placeholder="Room ID"
                             className="w-full"
                             value={id}

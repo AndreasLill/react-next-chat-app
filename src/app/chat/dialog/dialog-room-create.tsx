@@ -22,10 +22,10 @@ export default function DialogRoomCreate(props: Props) {
 
     async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
-        setError('')
 
         if (!name.match('^[A-Za-z0-9]{1,32}$')) {
-            setError('Please enter a valid name.')
+            console.log('error')
+            setError('Please enter a name between 1-32 characters.')
             return
         }
 
@@ -44,6 +44,7 @@ export default function DialogRoomCreate(props: Props) {
                             id="name"
                             type="text"
                             error={error}
+                            setError={setError}
                             placeholder="Room Name"
                             className="w-full"
                             value={name}
