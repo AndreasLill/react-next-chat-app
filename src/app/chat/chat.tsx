@@ -15,6 +15,7 @@ import { formatDate } from '@/utils/time'
 export default function Chat() {
     const { user, currentRoom, isSending, messages, onCreateRoom, onJoinRoom, onConnectToRoom, onSendMessage } = chatViewModel()
     const [input, setInput] = useState<string>('')
+    const [inputError, setInputError] = useState<string>('')
     const [dialogCreateRoom, setDialogCreateRoom] = useState<boolean>(false)
     const [dialogJoinRoom, setDialogJoinRoom] = useState<boolean>(false)
 
@@ -90,6 +91,13 @@ export default function Chat() {
                     className="flex items-center space-x-6 p-6"
                     onSubmit={(e) => {
                         e.preventDefault()
+                        if (!input.match('^.{1,255}$')) {
+                            setInputError('Please enter a text with 1-255 characters.')
+                            return
+                        }
+                        if (!currentRoom) {
+                            return
+                        }
                         onSendMessage(currentRoom, input)
                         setInput('')
                     }}
@@ -98,6 +106,8 @@ export default function Chat() {
                         <Input
                             id="chat"
                             type="text"
+                            error={inputError}
+                            setError={setInputError}
                             placeholder="Message To Chat"
                             autocomplete="off"
                             disabled={!currentRoom}

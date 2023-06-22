@@ -54,8 +54,8 @@ export default function chatViewModel() {
         setCurrentRoom(room)
     }
 
-    async function onSendMessage(room: Room | null, text: string) {
-        if (isSending || !room || !text) {
+    async function onSendMessage(room: Room, text: string) {
+        if (isSending) {
             return
         }
 
