@@ -1,10 +1,8 @@
 import { authOptions } from '@/lib/auth'
 import AppDatabase from '@/lib/database'
-import { pusherServer } from '@/lib/pusher'
+import { channelPrefix, pusherServer } from '@/lib/pusher'
 import { getServerSession } from 'next-auth'
 import Pusher from 'pusher'
-
-const pusherChannelPrefix = 'presence-'
 
 export async function POST(req: Request) {
     const body = await req.formData()
@@ -17,7 +15,7 @@ export async function POST(req: Request) {
     }
 
     try {
-        const authorized = AppDatabase.authorizeUserRoom(session.user.id, channel.replace(pusherChannelPrefix, ''))
+        const authorized = AppDatabase.authorizeUserRoom(session.user.id, channel.replace(channelPrefix, ''))
         if (!authorized) {
             return new Response(null, { status: 403 })
         }
@@ -29,7 +27,7 @@ export async function POST(req: Request) {
         user_id: session?.user.id
     } as Pusher.PresenceChannelData
 
-    console.log(`Authorized user ${session.user.id} for room ${channel.replace(pusherChannelPrefix, '')}.`)
+    console.log(`Authorized user ${session.user.id} for room ${channel.replace(channelPrefix, '')}.`)
     const response = pusherServer.authorizeChannel(socket, channel, userData)
     return new Response(JSON.stringify(response), { status: 200 })
 }

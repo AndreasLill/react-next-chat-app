@@ -2,7 +2,7 @@ import { authOptions } from '@/lib/auth'
 import { getServerSession } from 'next-auth'
 import AppDatabase from '@/lib/database'
 import { ApiBodyMessageSend } from '@/types/api'
-import { pusherServer } from '@/lib/pusher'
+import { channelPrefix, pusherServer } from '@/lib/pusher'
 
 export async function POST(req: Request) {
     const body = (await req.json()) as ApiBodyMessageSend
@@ -22,7 +22,7 @@ export async function POST(req: Request) {
 
     try {
         const message = await AppDatabase.sendMessage(session.user.id, body.room, body.text)
-        await pusherServer.trigger(body.room, 'message', message)
+        await pusherServer.trigger(`${channelPrefix}${body.room}`, 'message', message)
         return new Response(null, { status: 200 })
     } catch (error) {
         return new Response(null, { status: 500, statusText: 'There was a connection error.' })

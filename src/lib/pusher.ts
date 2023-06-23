@@ -1,5 +1,7 @@
 import Pusher from 'pusher'
 
+export const channelPrefix = 'presence-'
+
 export const pusherServer = new Pusher({
     appId: process.env.PUSHER_APP_ID,
     key: process.env.NEXT_PUBLIC_PUSHER_KEY,
