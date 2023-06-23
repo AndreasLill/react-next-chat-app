@@ -53,13 +53,18 @@ export default function chatViewModel() {
             return
         }
 
+        if (currentRoom) {
+            pusherClient?.unsubscribe(`${channelPrefix}${room.id}`)
+            pusherClient?.unbind('message')
+        }
+
         // Reset all shown messages and add server connected message.
         const id = crypto.randomUUID().toUpperCase()
         setMessages([{ id: `log-${id}`, sent: '', room: room.id, text: `Connected to ${room.name}.` } as Message])
         setCurrentRoom(room)
 
-        // Get currently subscribed members.
-        const channel = pusherClient?.channel(`${channelPrefix}${room.id}`) as PresenceChannel
+        const channel = pusherClient?.subscribe(`${channelPrefix}${room.id}`) as PresenceChannel
+        channel.bind('message', onReceiveMessage)
         setMembers(channel.members)
     }
 
@@ -68,7 +73,6 @@ export default function chatViewModel() {
             return
         }
 
-        // TODO: Validate text.
         setSending(true)
         const response = await fetch('/api/message/send', {
             method: 'POST',
@@ -77,15 +81,11 @@ export default function chatViewModel() {
         setSending(false)
     }
 
-    function onReceiveMessage(message: Message, roomId: string) {
-        // Using currentRoom state, so channel has to rebind this function when currentRoom changes.
-        if (currentRoom?.id === roomId.replace(channelPrefix, '')) {
-            setMessages((current) => [...current, message])
-        }
+    function onReceiveMessage(message: Message) {
+        setMessages((current) => [...current, message])
     }
 
     useEffect(() => {
-        // TODO: Batch auth requests if possible to prevent a lot of calls for many rooms.
         setPusherClient(
             new Pusher(
                 process.env.NEXT_PUBLIC_PUSHER_KEY as string,
@@ -106,25 +106,6 @@ export default function chatViewModel() {
             pusherClient?.disconnect()
         }
     }, [])
-
-    useEffect(() => {
-        // Subscribe to new rooms when a room change.
-        user?.rooms?.forEach((room) => {
-            var channel = pusherClient?.channel(`${channelPrefix}${room.id}`)
-            if (!channel) {
-                channel = pusherClient?.subscribe(`${channelPrefix}${room.id}`)
-            }
-            if (channel) {
-                channel?.bind('message', (message: Message) => onReceiveMessage(message, channel!.name))
-            }
-        })
-        // Clean up old bindings.
-        return () => {
-            pusherClient?.allChannels().forEach((channel) => {
-                channel.unbind('message')
-            })
-        }
-    }, [user?.rooms, currentRoom])
 
     return {
         user,
