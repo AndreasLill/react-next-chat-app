@@ -53,6 +53,26 @@ export default class AppDatabase {
         }
     }
 
+    static async authorizeUserRoom(userId: string, roomId: string) {
+        try {
+            const pool = await sql.connect(sqlConfig)
+            const results = await pool
+                .request()
+                .input('UserId', sql.UniqueIdentifier, userId)
+                .input('RoomId', sql.UniqueIdentifier, roomId)
+                .query('SELECT COUNT(*) as count FROM [dbo].[RoomJoin] WHERE UserID = @UserId AND RoomID = @RoomId')
+
+            if (results.recordset[0].count <= 0) {
+                return false
+            }
+
+            return true
+        } catch (error: any) {
+            console.error(error)
+            throw Error(error)
+        }
+    }
+
     static async addUser(name: string, email: string, password: string) {
         try {
             const hashedPass = await hashPass(password)

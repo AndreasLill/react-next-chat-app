@@ -1,7 +1,7 @@
 import { Message } from '@/types/message'
 import { User } from '@/types/user'
 import { PusherLogger } from '@/utils/logging'
-import Pusher, { Options } from 'pusher-js'
+import Pusher, { Members, Options, PresenceChannel } from 'pusher-js'
 import { useEffect, useState } from 'react'
 import useSWR, { mutate } from 'swr'
 import { ApiBodyMessageSend } from '@/types/api'
@@ -9,6 +9,7 @@ import { Room } from '@/types/room'
 
 Pusher.log = PusherLogger
 const fetcher = (url: string) => fetch(url, { method: 'GET' }).then((res: Response) => res.json())
+const pusherChannelPrefix = 'presence-'
 
 export default function chatViewModel() {
     const { data: user } = useSWR<User>('/api/user/get', fetcher)
@@ -16,6 +17,7 @@ export default function chatViewModel() {
     const [isSending, setSending] = useState<boolean>(false)
     const [messages, setMessages] = useState<Message[]>([])
     const [pusherClient, setPusherClient] = useState<Pusher>()
+    const [members, setMembers] = useState<Members>()
 
     async function onCreateRoom(name: string) {
         const response = await fetch('/api/room/add', {
@@ -52,6 +54,9 @@ export default function chatViewModel() {
         const id = crypto.randomUUID().toUpperCase()
         setMessages([{ id: `log-${id}`, sent: '', room: room.id, text: `Connected to ${room.name}.` } as Message])
         setCurrentRoom(room)
+        // Set members of the channel to see who is subscribed.
+        const channel = pusherClient?.allChannels().find((ch) => ch.name === `${pusherChannelPrefix}${room.id}`) as PresenceChannel
+        setMembers(channel.members)
     }
 
     async function onSendMessage(room: Room, text: string) {
@@ -83,7 +88,8 @@ export default function chatViewModel() {
                 {
                     activityTimeout: 30000,
                     pongTimeout: 15000,
-                    cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER
+                    cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER,
+                    authEndpoint: '/api/auth/pusher'
                 } as Options
             )
         )
@@ -100,8 +106,8 @@ export default function chatViewModel() {
     useEffect(() => {
         // Subscribe to all rooms when rooms change.
         user?.rooms?.forEach((room) => {
-            const channel = pusherClient?.subscribe(room.id)
-            channel?.bind('message', (data: any) => onReceiveMessage(data, channel.name, currentRoom))
+            const channel = pusherClient?.subscribe(`${pusherChannelPrefix}${room.id}`)
+            channel?.bind('message', (message: Message) => onReceiveMessage(message, channel.name, currentRoom))
             console.log(`Subscribed to room ${room.id}`)
         })
         // Clean up old subscriptions and bindings.
@@ -116,7 +122,7 @@ export default function chatViewModel() {
     useEffect(() => {
         // Rebind all channels after changing active room.
         pusherClient?.allChannels().forEach((channel) => {
-            channel.bind('message', (data: any) => onReceiveMessage(data, channel.name, currentRoom))
+            channel.bind('message', (message: Message) => onReceiveMessage(message, channel.name, currentRoom))
             console.log(`Rebinded room ${channel.name}`)
         })
         // Clean up old bindings.
