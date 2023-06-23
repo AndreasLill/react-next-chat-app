@@ -32,7 +32,9 @@ export default function Input(props: Props) {
                         placeholder={props.placeholder}
                         className={`${props.className} ${
                             props.error ? 'border-red-500 dark:text-red-400' : 'border-black/20 dark:border-white/20'
-                        } px-3 py-2 border rounded-md bg-slate-100 dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:outline-offset-0 focus:outline-rose-500 disabled:cursor-not-allowed`}
+                        } ${
+                            !props.disabled ? 'bg-slate-100 dark:bg-zinc-950' : 'bg-slate-100/50 dark:bg-zinc-950/50'
+                        } px-3 py-2 border rounded-md text-black dark:text-white focus:outline-none focus:outline-offset-0 focus:outline-rose-500 disabled:cursor-not-allowed`}
                         disabled={props.disabled ?? false}
                         autoComplete={props.autocomplete}
                         value={props.value}

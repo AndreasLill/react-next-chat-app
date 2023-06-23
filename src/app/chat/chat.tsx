@@ -1,5 +1,5 @@
 import { Room } from '@/types/room'
-import { LogOut, UserCircle, MoreVertical, Plus, Link2, Send, Loader2 } from 'lucide-react'
+import { LogOut, UserCircle, MoreVertical, Plus, Link2, Send, Loader2, HelpCircle, Users, X } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 import { useState } from 'react'
 import Input from '@/components/input'
@@ -13,7 +13,17 @@ import ButtonFilled from '@/components/button-filled'
 import { formatDate } from '@/utils/time'
 
 export default function Chat() {
-    const { user, currentRoom, isSending, messages, onCreateRoom, onJoinRoom, onConnectToRoom, onSendMessage } = chatViewModel()
+    const {
+        user,
+        currentRoom,
+        isSending,
+        messages,
+        onCreateRoom,
+        onJoinRoom,
+        onConnectToRoom,
+        onDisconnectFromCurrentRoom,
+        onSendMessage
+    } = chatViewModel()
     const [input, setInput] = useState<string>('')
     const [inputError, setInputError] = useState<string>('')
     const [dialogCreateRoom, setDialogCreateRoom] = useState<boolean>(false)
@@ -59,14 +69,18 @@ export default function Chat() {
                 </div>
             </div>
             <div className="flex flex-col flex-1 h-full bg-white dark:bg-zinc-900 rounded-lg shadow overflow-auto">
-                <div className="flex items-center justify-end p-6">
-                    <Tooltip text="Options">
-                        <ButtonIcon icon={<MoreVertical />} onClick={() => {}} />
-                    </Tooltip>
+                <div className="flex justify-between">
+                    <div className="flex items-center space-x-2 p-6">
+                        <ButtonIcon icon={<HelpCircle size={24} />} onClick={() => {}} />
+                        <ButtonIcon icon={<Users size={24} />} onClick={() => {}} />
+                    </div>
+                    <div className="flex items-center space-x-2 p-6">
+                        <ButtonIcon icon={<X size={24} />} onClick={onDisconnectFromCurrentRoom} />
+                    </div>
                 </div>
                 <div
-                    className={`flex flex-1 flex-col mx-6 bg-slate-100 dark:bg-zinc-950 border rounded-lg border-black/20 dark:border-white/20 overflow-y-scroll ${
-                        !currentRoom && 'cursor-not-allowed'
+                    className={`flex flex-1 flex-col mx-6 border rounded-lg border-black/20 dark:border-white/20 overflow-y-scroll ${
+                        currentRoom ? 'bg-slate-100 dark:bg-zinc-950' : 'bg-slate-100/50 dark:bg-zinc-950/50'
                     }`}
                 >
                     {messages?.map((message) => (

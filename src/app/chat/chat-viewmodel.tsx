@@ -17,7 +17,7 @@ export default function chatViewModel() {
     const [isSending, setSending] = useState<boolean>(false)
     const [messages, setMessages] = useState<Message[]>([])
     const [pusherClient, setPusherClient] = useState<Pusher>()
-    const [members, setMembers] = useState<Members>()
+    const [members, setMembers] = useState<Members | null>()
 
     async function onCreateRoom(name: string) {
         const response = await fetch('/api/room/add', {
@@ -68,6 +68,22 @@ export default function chatViewModel() {
         setMembers(channel.members)
     }
 
+    function onDisconnectFromCurrentRoom() {
+        if (!currentRoom) {
+            return
+        }
+        pusherClient?.unsubscribe(`${channelPrefix}${currentRoom.id}`)
+        pusherClient?.unbind('message')
+        setMembers(null)
+
+        const id = crypto.randomUUID().toUpperCase()
+        setMessages((current) => [
+            ...current,
+            { id: `log-${id}`, sent: '', room: currentRoom.id, text: `Disconnected from ${currentRoom.name}.` } as Message
+        ])
+        setCurrentRoom(null)
+    }
+
     async function onSendMessage(room: Room, text: string) {
         if (isSending) {
             return
@@ -115,6 +131,7 @@ export default function chatViewModel() {
         onCreateRoom,
         onJoinRoom,
         onConnectToRoom,
+        onDisconnectFromCurrentRoom,
         onSendMessage
     }
 }
