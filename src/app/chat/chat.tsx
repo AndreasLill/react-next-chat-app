@@ -1,7 +1,7 @@
 import { Room } from '@/types/room'
 import { LogOut, UserCircle, MoreVertical, Plus, Link2, Send, Loader2, HelpCircle, Users, X } from 'lucide-react'
 import { signOut } from 'next-auth/react'
-import { useState } from 'react'
+import { MutableRefObject, useRef, useState } from 'react'
 import Input from '@/components/input'
 import RoomToggle from './room-toggle'
 import DialogRoomCreate from './dialog/dialog-room-create'
@@ -11,6 +11,7 @@ import Tooltip from '@/components/tooltip'
 import chatViewModel from './chat-viewmodel'
 import ButtonFilled from '@/components/button-filled'
 import { formatDate } from '@/utils/time'
+import PopoverRoomDetails from './popover/popover-room-details'
 
 export default function Chat() {
     const {
@@ -24,6 +25,7 @@ export default function Chat() {
         onDisconnectFromCurrentRoom,
         onSendMessage
     } = chatViewModel()
+
     const [input, setInput] = useState<string>('')
     const [inputError, setInputError] = useState<string>('')
     const [dialogCreateRoom, setDialogCreateRoom] = useState<boolean>(false)
@@ -71,7 +73,11 @@ export default function Chat() {
             <div className="flex flex-col flex-1 h-full bg-white dark:bg-zinc-900 rounded-lg shadow overflow-auto">
                 <div className="flex justify-between">
                     <div className="flex items-center space-x-2 p-6">
-                        <ButtonIcon icon={<HelpCircle size={24} />} onClick={() => {}} />
+                        <PopoverRoomDetails roomId={currentRoom?.id ?? ''}>
+                            <Tooltip text="Show More">
+                                <ButtonIcon icon={<HelpCircle size={24} />} onClick={() => {}} />
+                            </Tooltip>
+                        </PopoverRoomDetails>
                         <ButtonIcon icon={<Users size={24} />} onClick={() => {}} />
                     </div>
                     <div className="flex items-center space-x-2 p-6">
@@ -125,7 +131,7 @@ export default function Chat() {
                             placeholder="Message To Chat"
                             autocomplete="off"
                             disabled={!currentRoom}
-                            className="w-full py-4 px-4"
+                            className="w-full py-4 px-4 disabled:cursor-not-allowed"
                             value={input}
                             onChange={(e) => setInput(e)}
                         />
