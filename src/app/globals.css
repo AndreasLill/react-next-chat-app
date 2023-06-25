@@ -4,6 +4,7 @@
 
 @layer base {
     body {
+        @apply tracking-normal;
         @apply bg-slate-100;
         @apply dark:bg-zinc-950;
         @apply text-black;

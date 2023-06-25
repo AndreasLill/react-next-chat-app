@@ -7,7 +7,7 @@ import RoomToggle from './room-toggle'
 import DialogRoomCreate from './dialog/dialog-room-create'
 import ButtonIcon from '@/components/button-icon'
 import DialogRoomJoin from './dialog/dialog-room-join'
-import Tooltip from '@/components/tooltip'
+import Tooltip from '@/ui/overlay/tooltip'
 import chatViewModel from './chat-viewmodel'
 import ButtonFilled from '@/components/button-filled'
 import { formatDate } from '@/utils/time'
@@ -32,9 +32,9 @@ export default function Chat() {
     const [dialogJoinRoom, setDialogJoinRoom] = useState<boolean>(false)
 
     return (
-        <div className="flex mx-auto max-w-[96rem] h-screen px-8 py-24 space-x-4">
-            <div className="flex flex-col w-80 h-full space-y-4">
-                <div className="flex justify-between items-center p-6 bg-white dark:bg-zinc-900 rounded-lg shadow">
+        <div className="mx-auto flex h-screen max-w-[96rem] space-x-4 px-8 py-24">
+            <div className="flex h-full w-80 flex-col space-y-4">
+                <div className="flex items-center justify-between rounded-lg bg-white p-6 shadow dark:bg-zinc-900">
                     <div className="flex items-center">
                         <UserCircle className="m-3" size={24} />
                         <h1 className="text-center font-semibold">{user?.name}</h1>
@@ -43,7 +43,7 @@ export default function Chat() {
                         <ButtonIcon icon={<LogOut size={24} />} onClick={() => signOut()} />
                     </Tooltip>
                 </div>
-                <div className="flex flex-1 flex-col p-6 bg-white dark:bg-zinc-900 rounded-lg shadow space-y-6 overflow-hidden">
+                <div className="flex flex-1 flex-col space-y-6 overflow-hidden rounded-lg bg-white p-6 shadow dark:bg-zinc-900">
                     <div className="flex space-x-2">
                         <Tooltip text="Create Room">
                             <ButtonIcon icon={<Plus size={24} />} onClick={() => setDialogCreateRoom(true)} />
@@ -70,7 +70,7 @@ export default function Chat() {
                     </ul>
                 </div>
             </div>
-            <div className="flex flex-col flex-1 h-full bg-white dark:bg-zinc-900 rounded-lg shadow overflow-auto">
+            <div className="flex h-full flex-1 flex-col overflow-auto rounded-lg bg-white shadow dark:bg-zinc-900">
                 <div className="flex justify-between">
                     <div className="flex items-center space-x-2 p-6">
                         <PopoverRoomDetails roomId={currentRoom?.id ?? ''}>
@@ -85,7 +85,7 @@ export default function Chat() {
                     </div>
                 </div>
                 <div
-                    className={`flex flex-1 flex-col mx-6 border rounded-lg border-black/20 dark:border-white/20 overflow-y-scroll ${
+                    className={`mx-6 flex flex-1 flex-col overflow-y-scroll rounded-lg border border-black/20 dark:border-white/20 ${
                         currentRoom ? 'bg-slate-100 dark:bg-zinc-950' : 'bg-slate-100/50 dark:bg-zinc-950/50'
                     }`}
                 >
@@ -94,7 +94,7 @@ export default function Chat() {
                             {message.user && (
                                 <div>
                                     <span className="text-md font-semibold text-black dark:text-white">{message.user}</span>
-                                    <span className="text-sm mx-2 text-black/50 dark:text-white/50">
+                                    <span className="mx-2 text-sm text-black/50 dark:text-white/50">
                                         {formatDate(navigator.language, message.sent)}
                                     </span>
                                 </div>
@@ -102,7 +102,7 @@ export default function Chat() {
                             {message.user ? (
                                 <span className="break-all">{message.text}</span>
                             ) : (
-                                <span className="break-all text-emerald-500 text-sm font-semibold">{message.text}</span>
+                                <span className="break-all text-sm font-semibold text-emerald-500">{message.text}</span>
                             )}
                         </div>
                     ))}
@@ -131,7 +131,7 @@ export default function Chat() {
                             placeholder="Message To Chat"
                             autocomplete="off"
                             disabled={!currentRoom}
-                            className="w-full py-4 px-4 disabled:cursor-not-allowed"
+                            className="w-full px-4 py-4 disabled:cursor-not-allowed"
                             value={input}
                             onChange={(e) => setInput(e)}
                         />

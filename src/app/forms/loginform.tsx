@@ -1,9 +1,9 @@
 import { signIn } from 'next-auth/react'
 import { useState } from 'react'
-import { AlertCircle, Loader2 } from 'lucide-react'
-import ButtonFilled from '@/components/button-filled'
-import Input from '@/components/input'
-import ButtonText from '@/components/button-text'
+import Button from '@/ui/button/button'
+import InputText from '@/ui/input/input-text'
+import InputPassword from '@/ui/input/input-password'
+import Alert from '@/ui/overlay/alert'
 
 interface Props {
     onChangeToRegistration: () => void
@@ -17,6 +17,11 @@ export default function LoginForm(props: Props) {
 
     const onLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
+
+        if (loading) {
+            return
+        }
+
         setError('')
         setLoading(true)
         const response = await signIn('credentials', {
@@ -32,46 +37,25 @@ export default function LoginForm(props: Props) {
     }
 
     return (
-        <div className="flex flex-col items-center mx-auto max-w-7xl px-8 py-24">
-            <form className="flex flex-col w-96 p-8 bg-white dark:bg-zinc-900 rounded-lg shadow space-y-8" onSubmit={onLogin}>
-                <h1 className="text-center font-bold text-xl">Log in to your account</h1>
+        <div className="mx-auto flex max-w-7xl flex-col items-center px-8 py-24">
+            <form className="flex w-96 flex-col space-y-8 rounded-lg bg-white p-8 shadow dark:bg-zinc-900" onSubmit={onLogin}>
+                <h1 className="text-center text-xl font-bold">Log in to your account</h1>
                 <div className="flex flex-col space-y-2">
-                    <Input
-                        id="email"
-                        type="text"
-                        label="Email"
-                        placeholder="Email"
-                        className="w-full"
-                        value={email}
-                        onChange={(e) => setEmail(e)}
-                    />
-                    <Input
+                    <InputText id="email" label="Email" placeholder="Email" value={email} onChange={(value) => setEmail(value)} />
+                    <InputPassword
                         id="password"
-                        type="password"
                         label="Password"
                         placeholder="Password"
-                        className="w-full"
                         value={password}
-                        onChange={(e) => setPassword(e)}
+                        onChange={(value) => setPassword(value)}
                     />
                 </div>
-                <ButtonFilled
-                    className="w-full justify-center"
-                    type="submit"
-                    icon={loading ? <Loader2 className="animate-spin" size={20} /> : null}
-                    text="Log In"
-                />
-                <div className="flex flex-col w-full items-center">
-                    <p className="text-center text-sm">No account yet?</p>
-                    <ButtonText text="Create Account" onClick={props.onChangeToRegistration} />
+                <div className="flex flex-col space-y-4">
+                    <Button variant="filled" type="submit" text="Log In" loading={loading} />
+                    <Button variant="subtle" text="Create Account" onClick={props.onChangeToRegistration} />
                 </div>
             </form>
-            {error && (
-                <div className="flex p-6 space-x-2 items-center">
-                    <AlertCircle className="text-red-500 dark:text-red-400" size={20} />
-                    <p className="text-red-500 dark:text-red-400">{error}</p>
-                </div>
-            )}
+            {error && <Alert title="Error" text={error} className="mt-8" />}
         </div>
     )
 }

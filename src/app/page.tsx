@@ -24,8 +24,8 @@ export default function Home() {
     // Authentication loading.
     if (status === 'loading') {
         return (
-            <div className="flex items-center justify-center w-screen h-screen">
-                <Loader2 className="text-rose-500 animate-spin" size={64} />
+            <div className="flex h-screen w-screen items-center justify-center">
+                <Loader2 className="animate-spin text-rose-500" size={64} />
             </div>
         )
     }

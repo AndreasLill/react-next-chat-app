@@ -12,7 +12,7 @@ const Tooltip = forwardRef<HTMLDivElement, Props>((props, forwardedRef) => (
             <RadixTooltip.Root>
                 <RadixTooltip.Trigger asChild>{props.children}</RadixTooltip.Trigger>
                 <RadixTooltip.Content
-                    className="bg-zinc-700 text-white px-3 py-2 text-sm select-none rounded-md shadow-lg transition-all"
+                    className="select-none rounded-md bg-zinc-700 px-3 py-2 text-sm text-white shadow-lg transition-all"
                     align="center"
                     side="top"
                     sideOffset={6}

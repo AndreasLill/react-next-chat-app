@@ -1,10 +1,10 @@
 'use client'
 
 import './globals.css'
-import { Inter } from 'next/font/google'
+import { Roboto_Flex as Font } from 'next/font/google'
 import { SessionProvider } from 'next-auth/react'
 
-const font = Inter({ weight: '400', subsets: ['latin'] })
+const font = Font({ weight: ['400', '600', '700'], subsets: ['latin'] })
 
 export const metadata = {
     title: 'Create Next App',

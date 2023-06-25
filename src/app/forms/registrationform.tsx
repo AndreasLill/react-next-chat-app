@@ -3,6 +3,10 @@ import { AlertCircle, Loader2 } from 'lucide-react'
 import Input from '@/components/input'
 import ButtonFilled from '@/components/button-filled'
 import ButtonText from '@/components/button-text'
+import Button from '@/ui/button/button'
+import InputText from '@/ui/input/input-text'
+import InputPassword from '@/ui/input/input-password'
+import Alert from '@/ui/overlay/alert'
 
 interface Props {
     onChangeToLogin: () => void
@@ -40,68 +44,46 @@ export default function RegistrationForm(props: Props) {
 
     if (success) {
         return (
-            <div className="flex flex-col items-center mx-auto max-w-5xl px-8 py-24">
-                <div className="flex flex-col w-96 p-8 bg-white dark:bg-zinc-900 rounded-lg shadow space-y-8">
+            <div className="mx-auto flex max-w-5xl flex-col items-center px-8 py-24">
+                <div className="flex w-96 flex-col space-y-8 rounded-lg bg-white p-8 shadow dark:bg-zinc-900">
                     <div>
                         <h1 className="text-center text-xl">Welcome!</h1>
                         <p className="mt-4 text-center text-sm">Your account has been created.</p>
                     </div>
-                    <ButtonText text="Go Back" onClick={props.onChangeToLogin} />
+                    <Button variant="subtle" text="Go Back" onClick={props.onChangeToLogin} />
                 </div>
             </div>
         )
     }
 
     return (
-        <div className="flex flex-col items-center mx-auto max-w-7xl px-8 py-24">
-            <form className="flex flex-col w-96 p-8 bg-white dark:bg-zinc-900 rounded-lg shadow space-y-8" onSubmit={onRegister}>
-                <h1 className="text-center font-bold text-xl">Create a new account</h1>
+        <div className="mx-auto flex max-w-7xl flex-col items-center px-8 py-24">
+            <form className="flex w-96 flex-col space-y-8 rounded-lg bg-white p-8 shadow dark:bg-zinc-900" onSubmit={onRegister}>
+                <h1 className="text-center text-xl font-bold">Create a new account</h1>
                 <div className="flex flex-col space-y-2">
-                    <Input
+                    <InputText
                         id="name"
-                        type="text"
                         label="Display Name"
                         placeholder="Display Name"
-                        className="w-full"
                         value={name}
-                        onChange={(e) => setName(e)}
+                        onChange={(value) => setName(value)}
                     />
-                    <Input
-                        id="email"
-                        type="text"
-                        label="Email"
-                        placeholder="Email"
-                        className="w-full"
-                        value={email}
-                        onChange={(e) => setEmail(e)}
-                    />
-                    <Input
+                    <InputText id="email" label="Email" placeholder="Email" value={name} onChange={(value) => setEmail(value)} />
+                    <InputPassword
                         id="password"
-                        type="password"
                         label="Password"
                         placeholder="Password"
-                        className="w-full"
                         value={password}
-                        onChange={(e) => setPassword(e)}
+                        onChange={(value) => setPassword(value)}
                     />
                 </div>
-                <ButtonFilled
-                    className="w-full justify-center"
-                    type="submit"
-                    icon={loading ? <Loader2 className="animate-spin" size={20} /> : null}
-                    text="Create Account"
-                />
-                <div className="flex flex-col w-full items-center">
+                <Button variant="filled" type="submit" text="Create Account" loading={loading} />
+                <div className="flex w-full flex-col items-center">
                     <p className="text-center text-sm">Already have an account?</p>
-                    <ButtonText text="Log In" onClick={props.onChangeToLogin} />
+                    <Button variant="subtle" text="Log In" onClick={props.onChangeToLogin} />
                 </div>
             </form>
-            {error && (
-                <div className="flex p-6 space-x-2 items-center">
-                    <AlertCircle className="text-red-500 dark:text-red-400" size={20} />
-                    <p className="text-red-500 dark:text-red-400">{error}</p>
-                </div>
-            )}
+            {error && <Alert title="Error" text={error} className="mt-8" />}
         </div>
     )
 }
