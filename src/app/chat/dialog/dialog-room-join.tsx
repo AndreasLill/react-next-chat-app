@@ -1,8 +1,7 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { useState, useEffect, Dispatch, SetStateAction } from 'react'
-import ButtonFilled from '@/components/button-filled'
-import Input from '@/components/input'
-import ButtonGhost from '@/components/button-ghost'
+import Button from '@/ui/button/button'
+import InputText from '@/ui/input/input-text'
 
 interface Props {
     state: boolean
@@ -36,22 +35,21 @@ export default function DialogRoomJoin(props: Props) {
         <Dialog.Root open={props.state} onOpenChange={props.setState}>
             <Dialog.Portal>
                 <Dialog.Overlay className="fixed inset-0 bg-black/80 transition-all" />
-                <Dialog.Content className="fixed w-96 max-w-lg max-h-96 translate-x-[-50%] translate-y-[-50%] top-[50%] left-[50%] rounded-lg bg-white dark:bg-zinc-900 p-8 transition-all">
+                <Dialog.Content className="fixed left-[50%] top-[50%] max-h-96 w-96 max-w-lg translate-x-[-50%] translate-y-[-50%] rounded-lg bg-white p-8 transition-all dark:bg-zinc-900">
                     <Dialog.Title className="mb-8 text-xl">Join a room</Dialog.Title>
                     <form className="flex flex-col" onSubmit={onSubmit}>
-                        <Input
+                        <InputText
                             id="id"
-                            type="text"
-                            error={error}
-                            setError={setError}
+                            label="Room"
                             placeholder="Room ID"
                             className="w-full"
+                            error={error}
                             value={id}
-                            onChange={(e) => setId(e)}
+                            onChange={(value) => setId(value)}
                         />
-                        <div className="mt-8 flex space-x-4 justify-end">
-                            <ButtonGhost text="Cancel" onClick={() => props.setState(false)} />
-                            <ButtonFilled type="submit" text="Join" />
+                        <div className="mt-8 flex justify-end space-x-4">
+                            <Button variant="subtle" text="Cancel" onClick={() => props.setState(false)} />
+                            <Button variant="filled" type="submit" text="Join" />
                         </div>
                     </form>
                 </Dialog.Content>

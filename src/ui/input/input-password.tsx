@@ -16,7 +16,7 @@ interface Props {
 const styles = {
     default: clsx('flex items-center rounded border bg-background text-sm outline-none transition-all dark:bg-background-dark'),
     disabled: clsx(
-        'flex items-center rounded border border-on-surface/10 bg-background/60 text-sm outline-none transition-all dark:border-on-surface-dark/10 dark:bg-background-dark/60 grayscale'
+        'flex items-center rounded border border-on-surface/10 bg-background/50 text-sm outline-none transition-all dark:border-on-surface-dark/10 dark:bg-background-dark/50'
     )
 }
 
@@ -43,7 +43,7 @@ const InputPassword = forwardRef<HTMLDivElement, Props>((props, forwardedRef) =>
                     name={props.id}
                     type={showPassword ? 'text' : 'password'}
                     placeholder={props.placeholder}
-                    className="h-full flex-grow rounded border-0 bg-transparent px-3 py-2 outline-none"
+                    className={clsx('h-full flex-grow rounded border-0 bg-transparent px-3 py-2 outline-none', props.className)}
                     disabled={props.disabled}
                     autoComplete="off"
                     value={props.value}

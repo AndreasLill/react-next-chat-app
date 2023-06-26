@@ -6,6 +6,7 @@ interface Props {
     id: string
     label?: string
     placeholder?: string
+    autoComplete?: 'on' | 'off'
     className?: string
     disabled?: boolean
     error?: string
@@ -18,7 +19,7 @@ const styles = {
         'rounded border border-on-surface/20 bg-background px-3 py-2 text-sm outline-none transition-colors focus:border-primary dark:border-on-surface-dark/20 dark:bg-background-dark'
     ),
     disabled: clsx(
-        'rounded border border-on-surface/10 bg-background/60 px-3 py-2 text-sm outline-none transition-colors dark:border-on-surface-dark/10 dark:bg-background-dark/60 grayscale'
+        'rounded border border-on-surface/10 bg-background/50 px-3 py-2 text-sm outline-none transition-colors dark:border-on-surface-dark/10 dark:bg-background-dark/50'
     ),
     error: clsx('rounded border border-error bg-background px-3 py-2 text-sm outline-none transition-colors dark:bg-background-dark')
 }
@@ -37,7 +38,8 @@ const InputText = forwardRef<HTMLDivElement, Props>((props, forwardedRef) => {
                 name={props.id}
                 type="text"
                 placeholder={props.placeholder}
-                className={clsx(props.disabled ? styles.disabled : props.error ? styles.error : styles.default)}
+                autoComplete={props.autoComplete ?? 'on'}
+                className={clsx(props.disabled ? styles.disabled : props.error ? styles.error : styles.default, props.className)}
                 disabled={props.disabled}
                 value={props.value}
                 onChange={(e) => {

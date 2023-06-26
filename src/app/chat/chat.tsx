@@ -1,17 +1,17 @@
 import { Room } from '@/types/room'
-import { LogOut, UserCircle, MoreVertical, Plus, Link2, Send, Loader2, HelpCircle, Users, X } from 'lucide-react'
+import { LogOut, Plus, Link2, Send, HelpCircle, Users, X } from 'lucide-react'
 import { signOut } from 'next-auth/react'
-import { MutableRefObject, useRef, useState } from 'react'
-import Input from '@/components/input'
+import { useState } from 'react'
 import RoomToggle from './room-toggle'
 import DialogRoomCreate from './dialog/dialog-room-create'
-import ButtonIcon from '@/components/button-icon'
 import DialogRoomJoin from './dialog/dialog-room-join'
 import Tooltip from '@/ui/overlay/tooltip'
 import chatViewModel from './chat-viewmodel'
-import ButtonFilled from '@/components/button-filled'
 import { formatDate } from '@/utils/time'
 import PopoverRoomDetails from './popover/popover-room-details'
+import clsx from 'clsx'
+import Button from '@/ui/button/button'
+import InputText from '@/ui/input/input-text'
 
 export default function Chat() {
     const {
@@ -34,19 +34,26 @@ export default function Chat() {
     return (
         <div className="mx-auto flex h-screen max-w-[96rem] space-x-4 px-8 py-24">
             <div className="flex h-full w-80 flex-col space-y-4">
-                <div className="flex items-center justify-between rounded-lg bg-white p-6 shadow dark:bg-zinc-900">
-                    <div className="flex items-center">
-                        <UserCircle className="m-3" size={24} />
-                        <h1 className="text-center font-semibold">{user?.name}</h1>
-                    </div>
+                <div className="flex items-center justify-between rounded-lg bg-surface p-6 shadow dark:bg-surface-dark">
+                    <h1 className="text-center font-semibold">{user?.name}</h1>
                     <Tooltip text="Log Out">
-                        <ButtonIcon icon={<LogOut size={24} />} onClick={() => signOut()} />
+                        <Button
+                            variant="subtle"
+                            icon={<LogOut size={20} />}
+                            className="text-on-surface hover:bg-on-surface/10 dark:text-on-surface-dark dark:hover:bg-on-surface-dark/10"
+                            onClick={signOut}
+                        />
                     </Tooltip>
                 </div>
-                <div className="flex flex-1 flex-col space-y-6 overflow-hidden rounded-lg bg-white p-6 shadow dark:bg-zinc-900">
+                <div className="flex flex-1 flex-col space-y-6 overflow-hidden rounded-lg bg-surface p-6 shadow dark:bg-surface-dark">
                     <div className="flex space-x-2">
                         <Tooltip text="Create Room">
-                            <ButtonIcon icon={<Plus size={24} />} onClick={() => setDialogCreateRoom(true)} />
+                            <Button
+                                variant="subtle"
+                                icon={<Plus size={20} />}
+                                className="text-on-surface hover:bg-on-surface/10 dark:text-on-surface-dark dark:hover:bg-on-surface-dark/10"
+                                onClick={() => setDialogCreateRoom(true)}
+                            />
                         </Tooltip>
                         <DialogRoomCreate
                             state={dialogCreateRoom}
@@ -54,7 +61,12 @@ export default function Chat() {
                             onSubmit={(value) => onCreateRoom(value)}
                         />
                         <Tooltip text="Join Room">
-                            <ButtonIcon icon={<Link2 size={24} />} onClick={() => setDialogJoinRoom(true)} />
+                            <Button
+                                variant="subtle"
+                                icon={<Link2 size={20} />}
+                                className="text-on-surface hover:bg-on-surface/10 dark:text-on-surface-dark dark:hover:bg-on-surface-dark/10"
+                                onClick={() => setDialogJoinRoom(true)}
+                            />
                         </Tooltip>
                         <DialogRoomJoin state={dialogJoinRoom} setState={setDialogJoinRoom} onSubmit={(value) => onJoinRoom(value)} />
                     </div>
@@ -70,31 +82,47 @@ export default function Chat() {
                     </ul>
                 </div>
             </div>
-            <div className="flex h-full flex-1 flex-col overflow-auto rounded-lg bg-white shadow dark:bg-zinc-900">
+            <div className="flex h-full flex-1 flex-col overflow-auto rounded-lg bg-surface shadow dark:bg-surface-dark">
                 <div className="flex justify-between">
                     <div className="flex items-center space-x-2 p-6">
                         <PopoverRoomDetails roomId={currentRoom?.id ?? ''}>
                             <Tooltip text="Show More">
-                                <ButtonIcon icon={<HelpCircle size={24} />} onClick={() => {}} />
+                                <Button
+                                    variant="subtle"
+                                    icon={<HelpCircle size={20} />}
+                                    className="text-on-surface hover:bg-on-surface/10 dark:text-on-surface-dark dark:hover:bg-on-surface-dark/10"
+                                    onClick={() => {}}
+                                />
                             </Tooltip>
                         </PopoverRoomDetails>
-                        <ButtonIcon icon={<Users size={24} />} onClick={() => {}} />
+                        <Button
+                            variant="subtle"
+                            icon={<Users size={20} />}
+                            className="text-on-surface hover:bg-on-surface/10 dark:text-on-surface-dark dark:hover:bg-on-surface-dark/10"
+                            onClick={() => {}}
+                        />
                     </div>
                     <div className="flex items-center space-x-2 p-6">
-                        <ButtonIcon icon={<X size={24} />} onClick={onDisconnectFromCurrentRoom} />
+                        <Button
+                            variant="subtle"
+                            icon={<X size={20} />}
+                            className="text-on-surface hover:bg-on-surface/10 dark:text-on-surface-dark dark:hover:bg-on-surface-dark/10"
+                            onClick={onDisconnectFromCurrentRoom}
+                        />
                     </div>
                 </div>
                 <div
-                    className={`mx-6 flex flex-1 flex-col overflow-y-scroll rounded-lg border border-black/20 dark:border-white/20 ${
-                        currentRoom ? 'bg-slate-100 dark:bg-zinc-950' : 'bg-slate-100/50 dark:bg-zinc-950/50'
-                    }`}
+                    className={clsx(
+                        'mx-6 flex flex-1 flex-col overflow-y-scroll rounded-lg border border-on-surface/20 dark:border-on-surface-dark/20',
+                        currentRoom ? 'bg-background dark:bg-background-dark' : 'bg-background/60 dark:bg-background-dark/60'
+                    )}
                 >
                     {messages?.map((message) => (
-                        <div key={message.id} className="flex flex-col px-6 py-3 hover:bg-slate-200 dark:hover:bg-slate-900">
+                        <div key={message.id} className="flex flex-col px-6 py-3 hover:bg-primary/10">
                             {message.user && (
                                 <div>
-                                    <span className="text-md font-semibold text-black dark:text-white">{message.user}</span>
-                                    <span className="mx-2 text-sm text-black/50 dark:text-white/50">
+                                    <span className="text-md font-semibold">{message.user}</span>
+                                    <span className="mx-2 text-sm text-on-surface/50 dark:text-on-surface-dark/50">
                                         {formatDate(navigator.language, message.sent)}
                                     </span>
                                 </div>
@@ -102,13 +130,13 @@ export default function Chat() {
                             {message.user ? (
                                 <span className="break-all">{message.text}</span>
                             ) : (
-                                <span className="break-all text-sm font-semibold text-emerald-500">{message.text}</span>
+                                <span className="break-all text-sm font-semibold">{message.text}</span>
                             )}
                         </div>
                     ))}
                 </div>
                 <form
-                    className="flex items-center space-x-6 p-6"
+                    className="flex space-x-6 p-6"
                     onSubmit={(e) => {
                         e.preventDefault()
                         if (!input.match('^.{1,255}$')) {
@@ -118,29 +146,32 @@ export default function Chat() {
                         if (!currentRoom) {
                             return
                         }
+                        console.log(input)
                         onSendMessage(currentRoom, input)
+                        setInputError('')
                         setInput('')
                     }}
                 >
                     <div className="flex-grow">
-                        <Input
+                        <InputText
                             id="chat"
-                            type="text"
-                            error={inputError}
-                            setError={setInputError}
-                            placeholder="Message To Chat"
-                            autocomplete="off"
+                            placeholder="Chat Message"
+                            autoComplete="off"
                             disabled={!currentRoom}
-                            className="w-full px-4 py-4 disabled:cursor-not-allowed"
+                            className="py-3 text-sm disabled:cursor-not-allowed"
+                            error={inputError}
                             value={input}
-                            onChange={(e) => setInput(e)}
+                            onChange={(value) => setInput(value)}
                         />
                     </div>
-                    <ButtonFilled
+                    <Button
+                        variant="filled"
                         type="submit"
+                        icon={<Send size={18} />}
                         text="Send"
-                        icon={isSending ? <Loader2 size={24} /> : <Send size={24} />}
-                        disabled={isSending || !currentRoom}
+                        className="h-fit py-3"
+                        loading={isSending}
+                        disabled={!currentRoom}
                     />
                 </form>
             </div>
