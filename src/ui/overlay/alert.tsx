@@ -10,10 +10,10 @@ interface Props {
 
 const Alert = forwardRef<HTMLDivElement, Props>((props, forwardedRef) => {
     return (
-        <div {...props} ref={forwardedRef} className={clsx('flex flex-col space-y-1 rounded-md bg-red-500/20 p-4', props.className)}>
+        <div {...props} ref={forwardedRef} className={clsx('flex flex-col space-y-1 rounded-md bg-error/20 p-4', props.className)}>
             <div className="flex items-center">
-                <AlertTriangle className="h-4 w-4 text-red-500" />
-                <h1 className="ms-2 text-sm font-semibold text-red-500">{props.title}</h1>
+                <AlertTriangle className="h-4 w-4 text-error" />
+                <h1 className="ms-2 text-sm font-semibold text-error">{props.title}</h1>
             </div>
             <div>
                 <p className="ms-6">{props.text}</p>

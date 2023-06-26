@@ -13,13 +13,15 @@ interface Props {
     onChange: (value: string) => void
 }
 
-const defaultStyle = clsx(
-    'rounded border border-zinc-950/20 bg-white px-3 py-2 text-sm outline-none transition-colors focus:border-rose-500 dark:border-white/20 dark:bg-zinc-950'
-)
-const disabledStyle = clsx(
-    'rounded border border-zinc-950/10 bg-white/60 px-3 py-2 text-sm outline-none transition-colors dark:border-white/10 dark:bg-zinc-950/60 grayscale'
-)
-const errorStyle = clsx('rounded border border-red-500 bg-white px-3 py-2 text-sm outline-none transition-colors dark:bg-zinc-950')
+const styles = {
+    default: clsx(
+        'rounded border border-on-surface/20 bg-background px-3 py-2 text-sm outline-none transition-colors focus:border-primary dark:border-on-surface-dark/20 dark:bg-background-dark'
+    ),
+    disabled: clsx(
+        'rounded border border-on-surface/10 bg-background/60 px-3 py-2 text-sm outline-none transition-colors dark:border-on-surface-dark/10 dark:bg-background-dark/60 grayscale'
+    ),
+    error: clsx('rounded border border-error bg-background px-3 py-2 text-sm outline-none transition-colors dark:bg-background-dark')
+}
 
 const InputText = forwardRef<HTMLDivElement, Props>((props, forwardedRef) => {
     return (
@@ -35,7 +37,7 @@ const InputText = forwardRef<HTMLDivElement, Props>((props, forwardedRef) => {
                 name={props.id}
                 type="text"
                 placeholder={props.placeholder}
-                className={clsx(props.disabled ? disabledStyle : props.error ? errorStyle : defaultStyle)}
+                className={clsx(props.disabled ? styles.disabled : props.error ? styles.error : styles.default)}
                 disabled={props.disabled}
                 value={props.value}
                 onChange={(e) => {
@@ -43,7 +45,7 @@ const InputText = forwardRef<HTMLDivElement, Props>((props, forwardedRef) => {
                 }}
             />
             {props.error && (
-                <div className="mt-1 flex items-center space-x-1 text-red-500">
+                <div className="mt-1 flex items-center space-x-1 text-error">
                     <AlertTriangle size={16} />
                     <p className="text-sm italic">{props.error}</p>
                 </div>

@@ -70,7 +70,7 @@ export default function RegistrationForm(props: Props) {
     if (success) {
         return (
             <div className="mx-auto flex max-w-5xl flex-col items-center px-8 py-24">
-                <div className="flex w-96 flex-col space-y-8 rounded-lg bg-white p-8 shadow dark:bg-zinc-900">
+                <div className="flex w-96 flex-col space-y-8 rounded-lg bg-surface p-8 shadow dark:bg-surface-dark">
                     <div>
                         <h1 className="text-center text-xl">Welcome!</h1>
                         <p className="mt-4 text-center text-sm">Your account has been created.</p>
@@ -84,7 +84,7 @@ export default function RegistrationForm(props: Props) {
     return (
         <div className="mx-auto flex max-w-7xl flex-col items-center px-8 py-24">
             <form
-                className="flex w-96 flex-col space-y-8 rounded-lg bg-white p-8 shadow dark:bg-zinc-900"
+                className="flex w-96 flex-col space-y-8 rounded-lg bg-surface p-8 shadow dark:bg-surface-dark"
                 onSubmit={handleSubmit(onRegister)}
             >
                 <h1 className="text-center text-xl font-bold">Create a new account</h1>

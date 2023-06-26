@@ -13,33 +13,35 @@ interface Props {
     onClick?: () => void
 }
 
-const defaultFilledStyle = clsx(
-    'rounded-md border border-transparent py-2 px-3 text-sm font-semibold outline-none focus-visible:outline-rose-500 text-white bg-rose-500 hover:bg-rose-500/80 active:translate-y-[1px] transition-colors'
-)
-const disabledFilledStyle = clsx(
-    'rounded-md border border-transparent py-2 px-3 text-sm font-semibold outline-none focus-visible:outline-rose-500 text-white/60 bg-rose-500/60 grayscale transition-colors cursor-default'
-)
-const loadingFilledStyle = clsx(
-    'rounded-md border border-transparent py-2 px-3 text-sm font-semibold outline-none focus-visible:outline-rose-500 selection:focus-visible:outline-rose-500 text-white/60 bg-rose-500/60 transition-colors cursor-default'
-)
-const defaultOutlineStyle = clsx(
-    'rounded-md border py-2 px-3 text-sm font-semibold outline-none focus-visible:outline-rose-500 border-rose-500 text-rose-500 hover:bg-rose-500/10 active:translate-y-[1px] transition-colors'
-)
-const disabledOutlineStyle = clsx(
-    'rounded-md border py-2 px-3 text-sm font-semibold outline-none focus-visible:outline-rose-500 border-rose-500/60 text-rose-500/60 grayscale transition-colors cursor-default'
-)
-const loadingOutlineStyle = clsx(
-    'rounded-md border py-2 px-3 text-sm font-semibold outline-none focus-visible:outline-rose-500 border-rose-500/60 text-rose-500/60 transition-colors cursor-default'
-)
-const defaultSubtleStyle = clsx(
-    'rounded-md border border-transparent py-2 px-3 text-sm font-semibold outline-none focus-visible:outline-rose-500 text-rose-500 hover:bg-rose-500/10 active:translate-y-[1px] transition-colors'
-)
-const disabledSubtleStyle = clsx(
-    'rounded-md border border-transparent py-2 px-3 text-sm font-semibold outline-none focus-visible:outline-rose-500 text-rose-500/60 grayscale transition-colors cursor-default'
-)
-const loadingSubtleStyle = clsx(
-    'rounded-md border border-transparent py-2 px-3 text-sm font-semibold outline-none focus-visible:outline-rose-500 text-rose-500/60 transition-colors cursor-default'
-)
+const styles = {
+    filledDefault: clsx(
+        'rounded-md border border-transparent py-2 px-3 text-sm font-semibold outline-none focus-visible:outline-primary text-on-primary bg-primary hover:bg-primary/80 active:translate-y-[1px] transition-colors'
+    ),
+    filledDisabled: clsx(
+        'rounded-md border border-transparent py-2 px-3 text-sm font-semibold outline-none focus-visible:outline-primary text-on-primary/60 bg-primary/60 grayscale transition-colors cursor-default'
+    ),
+    filledLoading: clsx(
+        'rounded-md border border-transparent py-2 px-3 text-sm font-semibold outline-none focus-visible:outline-primary selection:focus-visible:outline-primary text-on-primary/60 bg-primary/60 transition-colors cursor-default'
+    ),
+    outlineDefault: clsx(
+        'rounded-md border py-2 px-3 text-sm font-semibold outline-none focus-visible:outline-primary border-primary text-primary hover:bg-primary/10 active:translate-y-[1px] transition-colors'
+    ),
+    outlineDisabled: clsx(
+        'rounded-md border py-2 px-3 text-sm font-semibold outline-none focus-visible:outline-primary border-primary/60 text-primary/60 grayscale transition-colors cursor-default'
+    ),
+    outlineLoading: clsx(
+        'rounded-md border py-2 px-3 text-sm font-semibold outline-none focus-visible:outline-primary border-primary/60 text-primary/60 transition-colors cursor-default'
+    ),
+    subtleDefault: clsx(
+        'rounded-md border border-transparent py-2 px-3 text-sm font-semibold outline-none focus-visible:outline-primary text-primary hover:bg-primary/10 active:translate-y-[1px] transition-colors'
+    ),
+    subtleDisabled: clsx(
+        'rounded-md border border-transparent py-2 px-3 text-sm font-semibold outline-none focus-visible:outline-primary text-primary/60 grayscale transition-colors cursor-default'
+    ),
+    subtleLoading: clsx(
+        'rounded-md border border-transparent py-2 px-3 text-sm font-semibold outline-none focus-visible:outline-primary text-primary/60 transition-colors cursor-default'
+    )
+}
 
 const Button = forwardRef<HTMLButtonElement, Props>((props, forwardedRef) => {
     // Fallback ref may need to be used with some aria/radix components
@@ -66,11 +68,11 @@ const Button = forwardRef<HTMLButtonElement, Props>((props, forwardedRef) => {
             type={props.type ?? 'button'}
             className={clsx(
                 props.variant === 'filled' &&
-                    (props.disabled ? disabledFilledStyle : props.loading ? loadingFilledStyle : defaultFilledStyle),
+                    (props.disabled ? styles.filledDisabled : props.loading ? styles.filledLoading : styles.filledDefault),
                 props.variant === 'outline' &&
-                    (props.disabled ? disabledOutlineStyle : props.loading ? loadingOutlineStyle : defaultOutlineStyle),
+                    (props.disabled ? styles.outlineDisabled : props.loading ? styles.outlineLoading : styles.outlineDefault),
                 props.variant === 'subtle' &&
-                    (props.disabled ? disabledSubtleStyle : props.loading ? loadingSubtleStyle : defaultSubtleStyle),
+                    (props.disabled ? styles.subtleDisabled : props.loading ? styles.subtleLoading : styles.subtleDefault),
                 props.className
             )}
             disabled={props.disabled}

@@ -13,10 +13,12 @@ interface Props {
     onChange: (value: string) => void
 }
 
-const defaultStyle = clsx('flex items-center rounded border bg-white text-sm outline-none transition-all dark:bg-zinc-950')
-const disabledStyle = clsx(
-    'flex items-center rounded border border-zinc-950/10 bg-white/60 text-sm outline-none transition-all dark:border-white/10 dark:bg-zinc-950/60 grayscale'
-)
+const styles = {
+    default: clsx('flex items-center rounded border bg-background text-sm outline-none transition-all dark:bg-background-dark'),
+    disabled: clsx(
+        'flex items-center rounded border border-on-surface/10 bg-background/60 text-sm outline-none transition-all dark:border-on-surface-dark/10 dark:bg-background-dark/60 grayscale'
+    )
+}
 
 const InputPassword = forwardRef<HTMLDivElement, Props>((props, forwardedRef) => {
     const [focus, setFocus] = useState<boolean>(false)
@@ -31,8 +33,8 @@ const InputPassword = forwardRef<HTMLDivElement, Props>((props, forwardedRef) =>
             )}
             <div
                 className={clsx(
-                    props.disabled ? disabledStyle : defaultStyle,
-                    props.error ? 'border-red-500' : focus ? 'border-rose-500' : 'border-zinc-950/20 dark:border-white/20'
+                    props.disabled ? styles.disabled : styles.default,
+                    props.error ? 'border-error' : focus ? 'border-primary' : 'border-on-surface/20 dark:border-on-surface-dark/20'
                 )}
             >
                 <input
@@ -50,13 +52,13 @@ const InputPassword = forwardRef<HTMLDivElement, Props>((props, forwardedRef) =>
                     onBlur={() => setFocus(false)}
                 />
                 {showPassword ? (
-                    <EyeOff className="h-8 w-8 cursor-pointer rounded-md p-2 hover:bg-rose-500/10" onClick={() => setShowPassword(false)} />
+                    <EyeOff className="h-8 w-8 cursor-pointer rounded-md p-2 hover:bg-primary/10" onClick={() => setShowPassword(false)} />
                 ) : (
-                    <Eye className="h-8 w-8 cursor-pointer rounded-md p-2 hover:bg-rose-500/10" onClick={() => setShowPassword(true)} />
+                    <Eye className="h-8 w-8 cursor-pointer rounded-md p-2 hover:bg-primary/10" onClick={() => setShowPassword(true)} />
                 )}
             </div>
             {props.error && (
-                <div className="mt-1 flex items-center space-x-1 text-red-500">
+                <div className="mt-1 flex items-center space-x-1 text-error">
                     <AlertTriangle size={16} />
                     <p className="text-sm italic">{props.error}</p>
                 </div>

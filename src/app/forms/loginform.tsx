@@ -54,7 +54,10 @@ export default function LoginForm(props: Props) {
 
     return (
         <div className="mx-auto flex max-w-7xl flex-col items-center px-8 py-24">
-            <form className="flex w-96 flex-col space-y-8 rounded-lg bg-white p-8 shadow dark:bg-zinc-900" onSubmit={handleSubmit(onLogin)}>
+            <form
+                className="flex w-96 flex-col space-y-8 rounded-lg bg-surface p-8 shadow dark:bg-surface-dark"
+                onSubmit={handleSubmit(onLogin)}
+            >
                 <h1 className="text-center text-xl font-bold">Log in to your account</h1>
                 <div className="flex flex-col space-y-2">
                     <InputText

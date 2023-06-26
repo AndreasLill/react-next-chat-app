@@ -5,9 +5,9 @@
 @layer base {
     body {
         @apply tracking-normal;
-        @apply bg-slate-100;
-        @apply dark:bg-zinc-950;
-        @apply text-black;
-        @apply dark:text-white;
+        @apply bg-background;
+        @apply dark:bg-background-dark;
+        @apply text-on-surface;
+        @apply dark:text-on-surface-dark;
     }
 }
