@@ -113,7 +113,7 @@ export default function Chat() {
                 </div>
                 <div
                     className={clsx(
-                        'mx-6 flex flex-1 flex-col overflow-y-scroll rounded-lg border border-on-surface/20 dark:border-on-surface-dark/20',
+                        'mx-6 flex flex-1 flex-col overflow-y-scroll rounded border border-on-surface/20 dark:border-on-surface-dark/20',
                         currentRoom ? 'bg-background dark:bg-background-dark' : 'bg-background/60 dark:bg-background-dark/60'
                     )}
                 >

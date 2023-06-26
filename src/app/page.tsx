@@ -3,9 +3,9 @@
 import { useSession } from 'next-auth/react'
 import { useState } from 'react'
 import { Loader2 } from 'lucide-react'
-import LoginForm from './forms/loginform'
-import RegistrationForm from './forms/registrationform'
-import Chat from './chat/chat'
+import LoginForm from '../components/forms/loginform'
+import RegistrationForm from '../components/forms/registrationform'
+import Chat from '@/components/chat/chat'
 
 enum AuthTabs {
     Login,
