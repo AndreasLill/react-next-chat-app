@@ -1,16 +1,12 @@
 import clsx from 'clsx'
 import { Loader2 } from 'lucide-react'
-import { forwardRef } from 'react'
+import { ButtonHTMLAttributes, forwardRef } from 'react'
 
-interface Props {
+interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
     variant: 'filled' | 'outline' | 'subtle'
-    type?: 'button' | 'submit'
     icon?: JSX.Element
     text?: string
     loading?: boolean
-    disabled?: boolean
-    className?: string
-    onClick?: () => void
 }
 
 const styles = {
@@ -37,35 +33,27 @@ const styles = {
     )
 }
 
-const Button = forwardRef<HTMLButtonElement, Props>((props, forwardedRef) => {
+const Button = forwardRef<HTMLButtonElement, Props>(({ variant, icon, text, loading, className, onClick, ...props }, forwardedRef) => {
     // Fallback ref may need to be used with some aria/radix components
     // const fallbackRef = useRef<HTMLButtonElement>(null)
     // const domRef = forwardedRef || fallbackRef
 
-    // Remove loading from props to prevent error: Received `false` for a non-boolean attribute `loading`.
-    const { loading, ...other } = props
-
     return (
         <button
-            {...other}
+            {...props}
             ref={forwardedRef}
-            type={props.type ?? 'button'}
             className={clsx(
-                props.variant === 'filled' &&
-                    (props.disabled ? styles.disabled : props.loading ? styles.filledLoading : styles.filledDefault),
-                props.variant === 'outline' &&
-                    (props.disabled ? styles.disabled : props.loading ? styles.outlineLoading : styles.outlineDefault),
-                props.variant === 'subtle' &&
-                    (props.disabled ? styles.disabled : props.loading ? styles.subtleLoading : styles.subtleDefault),
-                props.text ? 'px-3 py-2' : 'p-2',
-                props.className
+                variant === 'filled' && (props.disabled ? styles.disabled : loading ? styles.filledLoading : styles.filledDefault),
+                variant === 'outline' && (props.disabled ? styles.disabled : loading ? styles.outlineLoading : styles.outlineDefault),
+                variant === 'subtle' && (props.disabled ? styles.disabled : loading ? styles.subtleLoading : styles.subtleDefault),
+                text ? 'px-3 py-2' : 'p-2',
+                className
             )}
-            disabled={props.disabled}
-            onClick={props.loading ? () => {} : props.onClick}
+            onClick={loading ? () => {} : onClick}
         >
             <div className="flex items-center justify-center space-x-2">
-                {props.loading ? <Loader2 size={20} className="animate-spin" /> : props.icon}
-                {props.text && <span>{props.text}</span>}
+                {loading ? <Loader2 size={20} className="animate-spin" /> : icon}
+                {text && <span>{text}</span>}
             </div>
         </button>
     )

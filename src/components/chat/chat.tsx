@@ -40,7 +40,7 @@ export default function Chat() {
                             variant="subtle"
                             icon={<LogOut size={20} />}
                             className="text-on-surface hover:bg-on-surface/10 dark:text-on-surface-dark dark:hover:bg-on-surface-dark/10"
-                            onClick={signOut}
+                            onClick={() => signOut()}
                         />
                     </Tooltip>
                 </div>
