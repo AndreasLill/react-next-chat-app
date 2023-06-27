@@ -18,7 +18,7 @@ const styles = {
         'rounded-md border border-transparent text-sm font-semibold outline-none focus-visible:outline-primary text-on-primary bg-primary hover:bg-primary/80 active:translate-y-[1px] transition-colors'
     ),
     filledLoading: clsx(
-        'rounded-md border border-transparent text-sm font-semibold outline-none focus-visible:outline-primary selection:focus-visible:outline-primary text-on-primary/50 bg-primary/50 transition-colors cursor-default'
+        'rounded-md border border-transparent text-sm font-semibold outline-none focus-visible:outline-primary text-on-primary/50 bg-primary/50 transition-colors cursor-default'
     ),
     outlineDefault: clsx(
         'rounded-md border text-sm font-semibold outline-none focus-visible:outline-primary border-primary text-primary hover:bg-primary/10 active:translate-y-[1px] transition-colors'
@@ -33,7 +33,7 @@ const styles = {
         'rounded-md border border-transparent text-sm font-semibold outline-none focus-visible:outline-primary text-primary/50 transition-colors cursor-default'
     ),
     disabled: clsx(
-        'rounded-md border border-transparent text-sm font-semibold outline-none text-on-surface/50 bg-surface/50 transition-colors cursor-default'
+        'rounded-md border border-transparent text-sm font-semibold outline-none text-on-surface/50 bg-surface/50 transition-colors'
     )
 }
 

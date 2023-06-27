@@ -14,7 +14,7 @@ interface Props {
 
 const loginFormSchema = zod.object({
     email: zod.string({ required_error: 'Email is required.' }).email({ message: 'A valid email address is required.' }),
-    password: zod.string({ required_error: 'Password is required.' })
+    password: zod.string({ required_error: 'Password is required.' }).min(1, { message: 'Password is required.' })
 })
 
 interface LoginForm {
@@ -28,8 +28,10 @@ export default function LoginForm(props: Props) {
         handleSubmit,
         setValue,
         clearErrors,
+        watch,
         formState: { errors }
     } = useForm<LoginForm>({ resolver: zodResolver(loginFormSchema) })
+    const passwordInput = watch('password', '')
     const [loading, setLoading] = useState<boolean>(false)
     const [alert, setAlert] = useState<string>('')
 
@@ -49,6 +51,7 @@ export default function LoginForm(props: Props) {
         setLoading(false)
         if (response?.error === 'CredentialsSignin') {
             setAlert('Incorrect email or password.')
+            setValue('password', '')
         }
     }
 
@@ -66,7 +69,9 @@ export default function LoginForm(props: Props) {
                         placeholder="Email"
                         error={errors.email?.message}
                         onChange={(value) => {
-                            clearErrors('email')
+                            if (errors.email) {
+                                clearErrors('email')
+                            }
                             setValue('email', value)
                         }}
                     />
@@ -75,8 +80,11 @@ export default function LoginForm(props: Props) {
                         label="Password"
                         placeholder="Password"
                         error={errors.password?.message}
+                        value={passwordInput}
                         onChange={(value) => {
-                            clearErrors('password')
+                            if (errors.password) {
+                                clearErrors('password')
+                            }
                             setValue('password', value)
                         }}
                     />

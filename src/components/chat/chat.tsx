@@ -1,7 +1,7 @@
 import { Room } from '@/types/room'
 import { LogOut, Plus, Link2, Send, HelpCircle, Users, X } from 'lucide-react'
 import { signOut } from 'next-auth/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import RoomToggle from './room-toggle'
 import DialogRoomCreate from './dialog/dialog-room-create'
 import DialogRoomJoin from './dialog/dialog-room-join'
@@ -12,8 +12,31 @@ import PopoverRoomDetails from './popover/popover-room-details'
 import clsx from 'clsx'
 import Button from '@/ui/button/button'
 import InputText from '@/ui/input/input-text'
+import { useForm, SubmitHandler } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as zod from 'zod'
+
+const chatFormSchema = zod.object({
+    message: zod
+        .string({ required_error: 'Please enter a chat message.' })
+        .min(1, { message: 'Please enter a chat message.' })
+        .max(255, { message: 'A chat message can be a maximum of 255 characters.' })
+})
+
+interface ChatForm {
+    message: string
+}
 
 export default function Chat() {
+    const {
+        register,
+        handleSubmit,
+        setValue,
+        clearErrors,
+        watch,
+        formState: { errors }
+    } = useForm<ChatForm>({ resolver: zodResolver(chatFormSchema) })
+
     const {
         user,
         currentRoom,
@@ -26,10 +49,20 @@ export default function Chat() {
         onSendMessage
     } = chatViewModel()
 
-    const [input, setInput] = useState<string>('')
-    const [inputError, setInputError] = useState<string>('')
+    const chatInput = watch('message', '')
     const [dialogCreateRoom, setDialogCreateRoom] = useState<boolean>(false)
     const [dialogJoinRoom, setDialogJoinRoom] = useState<boolean>(false)
+
+    useEffect(() => {
+        register('message')
+    }, [])
+
+    const onSubmit: SubmitHandler<ChatForm> = (form) => {
+        if (currentRoom) {
+            onSendMessage(currentRoom, form.message)
+            setValue('message', '')
+        }
+    }
 
     return (
         <div className="mx-auto flex h-screen max-w-[96rem] space-x-4 px-8 py-24">
@@ -135,23 +168,7 @@ export default function Chat() {
                         </div>
                     ))}
                 </div>
-                <form
-                    className="flex space-x-6 p-6"
-                    onSubmit={(e) => {
-                        e.preventDefault()
-                        if (!input.match('^.{1,255}$')) {
-                            setInputError('Please enter a text with 1-255 characters.')
-                            return
-                        }
-                        if (!currentRoom) {
-                            return
-                        }
-                        console.log(input)
-                        onSendMessage(currentRoom, input)
-                        setInputError('')
-                        setInput('')
-                    }}
-                >
+                <form className="flex space-x-6 p-6" onSubmit={handleSubmit(onSubmit)}>
                     <div className="flex-grow">
                         <InputText
                             id="chat"
@@ -159,9 +176,14 @@ export default function Chat() {
                             autoComplete="off"
                             disabled={!currentRoom}
                             className="py-3 text-sm disabled:cursor-not-allowed"
-                            error={inputError}
-                            value={input}
-                            onChange={(value) => setInput(value)}
+                            error={errors.message?.message}
+                            value={chatInput}
+                            onChange={(value) => {
+                                if (errors.message) {
+                                    clearErrors('message')
+                                }
+                                setValue('message', value)
+                            }}
                         />
                     </div>
                     <Button

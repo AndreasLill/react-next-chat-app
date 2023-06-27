@@ -95,7 +95,9 @@ export default function RegistrationForm(props: Props) {
                         placeholder="Display Name"
                         error={errors.name?.message}
                         onChange={(value) => {
-                            clearErrors('name')
+                            if (errors.name) {
+                                clearErrors('name')
+                            }
                             setValue('name', value)
                         }}
                     />
@@ -105,7 +107,9 @@ export default function RegistrationForm(props: Props) {
                         placeholder="Email"
                         error={errors.email?.message}
                         onChange={(value) => {
-                            clearErrors('email')
+                            if (errors.email) {
+                                clearErrors('email')
+                            }
                             setValue('email', value)
                         }}
                     />
@@ -115,13 +119,15 @@ export default function RegistrationForm(props: Props) {
                         placeholder="Password"
                         error={errors.password?.message}
                         onChange={(value) => {
-                            clearErrors('password')
+                            if (errors.password) {
+                                clearErrors('password')
+                            }
                             setValue('password', value)
                         }}
                     />
                 </div>
                 <Button variant="filled" type="submit" text="Create Account" loading={loading} />
-                <div className="flex w-full flex-col items-center">
+                <div className="flex w-full flex-col items-center space-y-1">
                     <p className="text-center text-sm">Already have an account?</p>
                     <Button variant="subtle" text="Log In" onClick={props.onChangeToLogin} />
                 </div>
