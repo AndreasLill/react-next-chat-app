@@ -1,16 +1,10 @@
 import { AlertTriangle, Eye, EyeOff } from 'lucide-react'
-import { forwardRef, useState } from 'react'
+import { InputHTMLAttributes, forwardRef, useState } from 'react'
 import { clsx } from 'clsx'
 
-interface Props {
-    id: string
+interface Props extends InputHTMLAttributes<HTMLInputElement> {
     label?: string
-    placeholder?: string
-    className?: string
-    disabled?: boolean
     error?: string
-    value?: string
-    onChange: (value: string) => void
 }
 
 const styles = {
@@ -20,34 +14,28 @@ const styles = {
     )
 }
 
-const InputPassword = forwardRef<HTMLDivElement, Props>((props, forwardedRef) => {
+const InputPassword = forwardRef<HTMLDivElement, Props>(({ label, error, ...props }, forwardedRef) => {
     const [focus, setFocus] = useState<boolean>(false)
     const [showPassword, setShowPassword] = useState<boolean>(false)
 
     return (
         <div ref={forwardedRef} className="flex flex-col">
-            {props.label && (
+            {label && (
                 <label htmlFor={props.id} className="pb-1 text-sm">
-                    {props.label}
+                    {label}
                 </label>
             )}
             <div
                 className={clsx(
                     props.disabled ? styles.disabled : styles.default,
-                    props.error ? 'border-error' : focus ? 'border-primary' : 'border-on-surface/20 dark:border-on-surface-dark/20'
+                    error ? 'border-error' : focus ? 'border-primary' : 'border-on-surface/20 dark:border-on-surface-dark/20'
                 )}
             >
                 <input
                     {...props}
-                    id={props.id}
-                    name={props.id}
                     type={showPassword ? 'text' : 'password'}
-                    placeholder={props.placeholder}
                     className={clsx('h-full flex-grow rounded border-0 bg-transparent px-3 py-2 outline-none', props.className)}
-                    disabled={props.disabled}
                     autoComplete="off"
-                    value={props.value}
-                    onChange={(e) => props.onChange(e.target.value)}
                     onFocus={() => setFocus(true)}
                     onBlur={() => setFocus(false)}
                 />
@@ -57,10 +45,10 @@ const InputPassword = forwardRef<HTMLDivElement, Props>((props, forwardedRef) =>
                     <Eye className="h-8 w-8 cursor-pointer rounded-md p-2 hover:bg-primary/10" onClick={() => setShowPassword(true)} />
                 )}
             </div>
-            {props.error && (
+            {error && (
                 <div className="mt-1 flex items-center space-x-1 text-error">
                     <AlertTriangle size={16} />
-                    <p className="text-sm italic">{props.error}</p>
+                    <p className="text-sm italic">{error}</p>
                 </div>
             )}
         </div>

@@ -94,11 +94,11 @@ export default function RegistrationForm(props: Props) {
                         label="Display Name"
                         placeholder="Display Name"
                         error={errors.name?.message}
-                        onChange={(value) => {
+                        onChange={(e) => {
                             if (errors.name) {
                                 clearErrors('name')
                             }
-                            setValue('name', value)
+                            setValue('name', e.target.value)
                         }}
                     />
                     <InputText
@@ -106,11 +106,11 @@ export default function RegistrationForm(props: Props) {
                         label="Email"
                         placeholder="Email"
                         error={errors.email?.message}
-                        onChange={(value) => {
+                        onChange={(e) => {
                             if (errors.email) {
                                 clearErrors('email')
                             }
-                            setValue('email', value)
+                            setValue('email', e.target.value)
                         }}
                     />
                     <InputPassword
@@ -118,11 +118,11 @@ export default function RegistrationForm(props: Props) {
                         label="Password"
                         placeholder="Password"
                         error={errors.password?.message}
-                        onChange={(value) => {
+                        onChange={(e) => {
                             if (errors.password) {
                                 clearErrors('password')
                             }
-                            setValue('password', value)
+                            setValue('password', e.target.value)
                         }}
                     />
                 </div>

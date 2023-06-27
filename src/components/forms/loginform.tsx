@@ -68,11 +68,11 @@ export default function LoginForm(props: Props) {
                         label="Email"
                         placeholder="Email"
                         error={errors.email?.message}
-                        onChange={(value) => {
+                        onChange={(e) => {
                             if (errors.email) {
                                 clearErrors('email')
                             }
-                            setValue('email', value)
+                            setValue('email', e.target.value)
                         }}
                     />
                     <InputPassword
@@ -81,11 +81,11 @@ export default function LoginForm(props: Props) {
                         placeholder="Password"
                         error={errors.password?.message}
                         value={passwordInput}
-                        onChange={(value) => {
+                        onChange={(e) => {
                             if (errors.password) {
                                 clearErrors('password')
                             }
-                            setValue('password', value)
+                            setValue('password', e.target.value)
                         }}
                     />
                 </div>

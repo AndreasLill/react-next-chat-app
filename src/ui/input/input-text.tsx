@@ -1,17 +1,10 @@
-import { forwardRef } from 'react'
+import { InputHTMLAttributes, forwardRef } from 'react'
 import { clsx } from 'clsx'
 import { AlertTriangle } from 'lucide-react'
 
-interface Props {
-    id: string
+interface Props extends InputHTMLAttributes<HTMLInputElement> {
     label?: string
-    placeholder?: string
-    autoComplete?: 'on' | 'off'
-    className?: string
-    disabled?: boolean
     error?: string
-    value?: string
-    onChange: (value: string) => void
 }
 
 const styles = {
@@ -24,32 +17,23 @@ const styles = {
     error: clsx('rounded border border-error bg-background px-3 py-2 text-sm outline-none transition-colors dark:bg-background-dark')
 }
 
-const InputText = forwardRef<HTMLDivElement, Props>((props, forwardedRef) => {
+const InputText = forwardRef<HTMLDivElement, Props>(({ label, error, ...props }, forwardedRef) => {
     return (
         <div ref={forwardedRef} className="flex flex-col">
-            {props.label && (
+            {label && (
                 <label htmlFor={props.id} className="pb-1 text-sm">
-                    {props.label}
+                    {label}
                 </label>
             )}
             <input
                 {...props}
-                id={props.id}
-                name={props.id}
                 type="text"
-                placeholder={props.placeholder}
-                autoComplete={props.autoComplete ?? 'on'}
-                className={clsx(props.disabled ? styles.disabled : props.error ? styles.error : styles.default, props.className)}
-                disabled={props.disabled}
-                value={props.value}
-                onChange={(e) => {
-                    props.onChange(e.target.value)
-                }}
+                className={clsx(props.disabled ? styles.disabled : error ? styles.error : styles.default, props.className)}
             />
-            {props.error && (
+            {error && (
                 <div className="mt-1 flex items-center space-x-1 text-error">
                     <AlertTriangle size={16} />
-                    <p className="text-sm italic">{props.error}</p>
+                    <p className="text-sm italic">{error}</p>
                 </div>
             )}
         </div>

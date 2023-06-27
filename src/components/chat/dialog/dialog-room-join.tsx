@@ -45,7 +45,7 @@ export default function DialogRoomJoin(props: Props) {
                             className="w-full"
                             error={error}
                             value={id}
-                            onChange={(value) => setId(value)}
+                            onChange={(e) => setId(e.target.value)}
                         />
                         <div className="mt-8 flex justify-end space-x-4">
                             <Button variant="subtle" text="Cancel" onClick={() => props.setState(false)} />

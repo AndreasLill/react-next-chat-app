@@ -54,11 +54,11 @@ export default function ChatForm(props: Props) {
                     className="py-3 text-sm disabled:cursor-not-allowed"
                     error={errors.message?.message}
                     value={chatInput}
-                    onChange={(value) => {
+                    onChange={(e) => {
                         if (errors.message) {
                             clearErrors('message')
                         }
-                        setValue('message', value)
+                        setValue('message', e.target.value)
                     }}
                 />
             </div>

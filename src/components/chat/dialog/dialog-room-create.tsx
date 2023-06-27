@@ -46,7 +46,7 @@ export default function DialogRoomCreate(props: Props) {
                             className="w-full"
                             error={error}
                             value={name}
-                            onChange={(value) => setName(value)}
+                            onChange={(e) => setName(e.target.value)}
                         />
                         <div className="mt-8 flex justify-end space-x-4">
                             <Button variant="subtle" text="Cancel" onClick={() => props.setState(false)} />
