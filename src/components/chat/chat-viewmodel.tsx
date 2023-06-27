@@ -84,15 +84,11 @@ export default function chatViewModel() {
         setCurrentRoom(null)
     }
 
-    async function onSendMessage(room: Room, text: string) {
-        if (isSending) {
-            return
-        }
-
+    async function onSendMessage(text: string) {
         setSending(true)
         const response = await fetch('/api/message/send', {
             method: 'POST',
-            body: JSON.stringify({ room: room.id, text: text } as ApiBodyMessageSend)
+            body: JSON.stringify({ room: currentRoom?.id, text: text } as ApiBodyMessageSend)
         }).then((res: Response) => res)
         setSending(false)
     }
