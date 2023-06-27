@@ -11,7 +11,6 @@ import { formatDate } from '@/utils/time'
 import PopoverRoomDetails from './popover/popover-room-details'
 import clsx from 'clsx'
 import Button from '@/ui/button/button'
-import InputText from '@/ui/input/input-text'
 import ChatForm from './chat-form'
 
 export default function Chat() {
@@ -36,23 +35,13 @@ export default function Chat() {
                 <div className="flex items-center justify-between rounded-lg bg-surface p-6 shadow dark:bg-surface-dark">
                     <h1 className="text-center font-semibold">{user?.name}</h1>
                     <Tooltip text="Log Out">
-                        <Button
-                            variant="subtle"
-                            icon={<LogOut size={20} />}
-                            className="text-on-surface hover:bg-on-surface/10 dark:text-on-surface-dark dark:hover:bg-on-surface-dark/10"
-                            onClick={() => signOut()}
-                        />
+                        <Button variant="subtle" icon={<LogOut size={20} />} onClick={() => signOut()} />
                     </Tooltip>
                 </div>
                 <div className="flex flex-1 flex-col space-y-6 overflow-hidden rounded-lg bg-surface p-6 shadow dark:bg-surface-dark">
                     <div className="flex space-x-2">
                         <Tooltip text="Create Room">
-                            <Button
-                                variant="subtle"
-                                icon={<Plus size={20} />}
-                                className="text-on-surface hover:bg-on-surface/10 dark:text-on-surface-dark dark:hover:bg-on-surface-dark/10"
-                                onClick={() => setDialogCreateRoom(true)}
-                            />
+                            <Button variant="subtle" icon={<Plus size={20} />} onClick={() => setDialogCreateRoom(true)} />
                         </Tooltip>
                         <DialogRoomCreate
                             state={dialogCreateRoom}
@@ -60,12 +49,7 @@ export default function Chat() {
                             onSubmit={(value) => onCreateRoom(value)}
                         />
                         <Tooltip text="Join Room">
-                            <Button
-                                variant="subtle"
-                                icon={<Link2 size={20} />}
-                                className="text-on-surface hover:bg-on-surface/10 dark:text-on-surface-dark dark:hover:bg-on-surface-dark/10"
-                                onClick={() => setDialogJoinRoom(true)}
-                            />
+                            <Button variant="subtle" icon={<Link2 size={20} />} onClick={() => setDialogJoinRoom(true)} />
                         </Tooltip>
                         <DialogRoomJoin state={dialogJoinRoom} setState={setDialogJoinRoom} onSubmit={(value) => onJoinRoom(value)} />
                     </div>
@@ -86,28 +70,13 @@ export default function Chat() {
                     <div className="flex items-center space-x-2 p-6">
                         <PopoverRoomDetails roomId={currentRoom?.id ?? ''}>
                             <Tooltip text="Show More">
-                                <Button
-                                    variant="subtle"
-                                    icon={<HelpCircle size={20} />}
-                                    className="text-on-surface hover:bg-on-surface/10 dark:text-on-surface-dark dark:hover:bg-on-surface-dark/10"
-                                    onClick={() => {}}
-                                />
+                                <Button variant="subtle" icon={<HelpCircle size={20} />} onClick={() => {}} />
                             </Tooltip>
                         </PopoverRoomDetails>
-                        <Button
-                            variant="subtle"
-                            icon={<Users size={20} />}
-                            className="text-on-surface hover:bg-on-surface/10 dark:text-on-surface-dark dark:hover:bg-on-surface-dark/10"
-                            onClick={() => {}}
-                        />
+                        <Button variant="subtle" icon={<Users size={20} />} onClick={() => {}} />
                     </div>
                     <div className="flex items-center space-x-2 p-6">
-                        <Button
-                            variant="subtle"
-                            icon={<X size={20} />}
-                            className="text-on-surface hover:bg-on-surface/10 dark:text-on-surface-dark dark:hover:bg-on-surface-dark/10"
-                            onClick={onDisconnectFromCurrentRoom}
-                        />
+                        <Button variant="subtle" icon={<X size={20} />} onClick={onDisconnectFromCurrentRoom} />
                     </div>
                 </div>
                 <div
