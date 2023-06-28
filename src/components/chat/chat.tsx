@@ -2,7 +2,6 @@ import { Room } from '@/types/room'
 import { LogOut, Plus, Link2, HelpCircle, Users, X } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 import { useState } from 'react'
-import RoomToggle from './room-toggle'
 import DialogRoomCreate from './dialog/dialog-room-create'
 import DialogRoomJoin from './dialog/dialog-room-join'
 import Tooltip from '@/ui/overlay/tooltip'
@@ -12,6 +11,7 @@ import PopoverRoomDetails from './popover/popover-room-details'
 import clsx from 'clsx'
 import Button from '@/ui/button/button'
 import ChatForm from './chat-form'
+import ButtonToggle from '@/ui/button/button-toggle'
 
 export default function Chat() {
     const {
@@ -53,9 +53,9 @@ export default function Chat() {
                         </Tooltip>
                         <DialogRoomJoin state={dialogJoinRoom} setState={setDialogJoinRoom} onSubmit={(value) => onJoinRoom(value)} />
                     </div>
-                    <ul className="flex flex-grow flex-col space-y-2 overflow-scroll">
+                    <ul className="flex flex-grow flex-col overflow-scroll">
                         {user?.rooms?.map((room: Room) => (
-                            <RoomToggle
+                            <ButtonToggle
                                 key={room.id}
                                 text={room.name}
                                 toggled={room.id === currentRoom?.id}
