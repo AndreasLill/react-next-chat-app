@@ -3,7 +3,7 @@ import InputText from '@/ui/input/input-text'
 import { Send } from 'lucide-react'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import * as zod from 'zod'
+import { z as zod } from 'zod'
 import { useEffect } from 'react'
 
 const chatFormSchema = zod.object({
@@ -18,7 +18,7 @@ interface ChatForm {
 }
 
 interface Props {
-    sending: boolean
+    loading: boolean
     disabled: boolean
     onSendMessage: (value: string) => void
 }
@@ -68,7 +68,7 @@ export default function ChatForm(props: Props) {
                 icon={<Send size={18} />}
                 text="Send"
                 className="h-fit py-3"
-                loading={props.sending}
+                loading={props.loading}
                 disabled={props.disabled}
             />
         </form>

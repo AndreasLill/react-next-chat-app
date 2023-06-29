@@ -16,7 +16,8 @@ export default function Chat() {
     const {
         user,
         currentRoom,
-        isSending,
+        sending,
+        connecting,
         messages,
         members,
         onCreateRoom,
@@ -88,7 +89,7 @@ export default function Chat() {
                     </Tooltip>
                 </div>
                 <ChatScreen messages={messages} disabled={!currentRoom} />
-                <ChatForm sending={isSending} disabled={!currentRoom} onSendMessage={onSendMessage} />
+                <ChatForm loading={sending} disabled={!currentRoom || connecting} onSendMessage={onSendMessage} />
             </div>
         </div>
     )

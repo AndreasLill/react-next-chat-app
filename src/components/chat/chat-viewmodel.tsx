@@ -9,12 +9,13 @@ import { Room } from '@/types/room'
 import { channelPrefix } from '@/lib/pusher'
 
 Pusher.log = PusherLogger
-const fetcher = (url: string) => fetch(url, { method: 'GET' }).then((res: Response) => res.json())
+const fetcher = (url: string) => fetch(url).then((res: Response) => res.json())
 
 export default function chatViewModel() {
     const { data: user } = useSWR<User>('/api/user/get', fetcher)
     const [currentRoom, setCurrentRoom] = useState<Room | null>(null)
-    const [isSending, setSending] = useState<boolean>(false)
+    const [sending, setSending] = useState<boolean>(false)
+    const [connecting, setConnecting] = useState<boolean>(false)
     const [messages, setMessages] = useState<Message[]>([])
     const [pusherClient, setPusherClient] = useState<Pusher>()
     const [members, setMembers] = useState<Members | null>()
@@ -52,15 +53,18 @@ export default function chatViewModel() {
             return
         }
 
+        setConnecting(true)
+        setCurrentRoom(room)
+        const logId = crypto.randomUUID().toUpperCase()
+        setMessages([{ id: `log-${logId}`, sent: '', text: `Connecting to ${room.name}...` } as Message])
+
         if (currentRoom) {
             pusherClient?.unsubscribe(`${channelPrefix}${room.id}`)
             pusherClient?.unbind('message')
             pusherClient?.unbind('pusher:subscription_succeeded')
         }
 
-        // TODO: Get room message history before connecting.
-        setMessages([])
-        setCurrentRoom(room)
+        // TODO: Get room message history before subscribing.
 
         const channel = pusherClient?.subscribe(`${channelPrefix}${room.id}`) as PresenceChannel
         channel.bind('message', onReceiveMessage)
@@ -70,6 +74,7 @@ export default function chatViewModel() {
                 body: JSON.stringify({ type: 'join', channel: channel.name } as ApiMessageAnnounce)
             }).then((res: Response) => res)
             setMembers(members)
+            setConnecting(false)
             console.log('subscription succeed called')
         })
     }
@@ -83,7 +88,7 @@ export default function chatViewModel() {
         setMembers(null)
 
         const id = crypto.randomUUID().toUpperCase()
-        setMessages([{ id: `log-${id}`, sent: '', room: currentRoom.id, text: `Disconnected from ${currentRoom.name}.` } as Message])
+        setMessages([{ id: `log-${id}`, sent: '', text: `Disconnected from ${currentRoom.name}.` } as Message])
         setCurrentRoom(null)
     }
 
@@ -125,7 +130,8 @@ export default function chatViewModel() {
     return {
         user,
         currentRoom,
-        isSending,
+        sending,
+        connecting,
         messages,
         members,
         onCreateRoom,

@@ -20,15 +20,13 @@ export default function ChatScreen(props: Props) {
                     {message.user && (
                         <div>
                             <span className="text-md font-semibold">{message.user}</span>
-                            <span className="mx-2 text-sm text-on-surface/50 dark:text-on-surface-dark/50">
-                                {formatDate(navigator.language, message.sent)}
-                            </span>
+                            <span className="mx-2 text-sm opacity-50">{formatDate(navigator.language, message.sent)}</span>
                         </div>
                     )}
                     {message.user ? (
                         <span className="break-all">{message.text}</span>
                     ) : (
-                        <span className="break-all text-sm font-semibold italic">{message.text}</span>
+                        <span className="break-all text-sm font-semibold italic opacity-50">{message.text}</span>
                     )}
                 </div>
             ))}
