@@ -6,9 +6,7 @@ import DialogRoomCreate from './dialog/dialog-room-create'
 import DialogRoomJoin from './dialog/dialog-room-join'
 import Tooltip from '@/ui/overlay/tooltip'
 import chatViewModel from './chat-viewmodel'
-import { formatDate } from '@/utils/time'
 import PopoverRoomDetails from './popover/popover-room-details'
-import clsx from 'clsx'
 import Button from '@/ui/button/button'
 import ChatForm from './chat-form'
 import ButtonToggle from '@/ui/button/button-toggle'
@@ -20,6 +18,7 @@ export default function Chat() {
         currentRoom,
         isSending,
         messages,
+        members,
         onCreateRoom,
         onJoinRoom,
         onConnectToRoom,
@@ -71,7 +70,13 @@ export default function Chat() {
             <div className="flex h-full flex-grow flex-col overflow-auto rounded-lg bg-surface shadow dark:bg-surface-dark">
                 <div className="flex justify-end space-x-1 p-6">
                     <Tooltip text="Active Users">
-                        <Button variant="action" icon={<Users size={20} />} onClick={() => {}} disabled={!currentRoom} />
+                        <Button
+                            variant="action"
+                            text={members?.count.toString()}
+                            icon={<Users size={20} />}
+                            onClick={() => {}}
+                            disabled={!currentRoom}
+                        />
                     </Tooltip>
                     <PopoverRoomDetails roomId={currentRoom?.id ?? ''}>
                         <Tooltip text="Room Information">

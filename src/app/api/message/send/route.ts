@@ -1,11 +1,11 @@
 import { authOptions } from '@/lib/auth'
 import { getServerSession } from 'next-auth'
 import AppDatabase from '@/lib/database'
-import { ApiBodyMessageSend } from '@/types/api'
+import { ApiMessageSend } from '@/types/api'
 import { channelPrefix, pusherServer } from '@/lib/pusher'
 
 export async function POST(req: Request) {
-    const body = (await req.json()) as ApiBodyMessageSend
+    const body = (await req.json()) as ApiMessageSend
     const session = await getServerSession(authOptions)
 
     if (!session?.user) {

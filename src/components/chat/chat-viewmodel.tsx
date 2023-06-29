@@ -4,7 +4,7 @@ import { PusherLogger } from '@/utils/logging'
 import Pusher, { Members, Options, PresenceChannel } from 'pusher-js'
 import { useEffect, useState } from 'react'
 import useSWR, { mutate } from 'swr'
-import { ApiBodyMessageSend } from '@/types/api'
+import { ApiMessageAnnounce, ApiMessageSend } from '@/types/api'
 import { Room } from '@/types/room'
 import { channelPrefix } from '@/lib/pusher'
 
@@ -48,7 +48,6 @@ export default function chatViewModel() {
     }
 
     function onConnectToRoom(room: Room) {
-        // TODO: Get room message history before connecting.
         if (currentRoom?.id === room.id) {
             return
         }
@@ -56,16 +55,23 @@ export default function chatViewModel() {
         if (currentRoom) {
             pusherClient?.unsubscribe(`${channelPrefix}${room.id}`)
             pusherClient?.unbind('message')
+            pusherClient?.unbind('pusher:subscription_succeeded')
         }
 
-        // Reset all shown messages and add server connected message.
-        const id = crypto.randomUUID().toUpperCase()
-        setMessages([{ id: `log-${id}`, sent: '', room: room.id, text: `Connected to ${room.name}.` } as Message])
+        // TODO: Get room message history before connecting.
+        setMessages([])
         setCurrentRoom(room)
 
         const channel = pusherClient?.subscribe(`${channelPrefix}${room.id}`) as PresenceChannel
         channel.bind('message', onReceiveMessage)
-        setMembers(channel.members)
+        channel.bind('pusher:subscription_succeeded', async (members: Members) => {
+            const response = await fetch('/api/message/announce', {
+                method: 'POST',
+                body: JSON.stringify({ type: 'join', channel: channel.name } as ApiMessageAnnounce)
+            }).then((res: Response) => res)
+            setMembers(members)
+            console.log('subscription succeed called')
+        })
     }
 
     function onDisconnectFromCurrentRoom() {
@@ -85,7 +91,7 @@ export default function chatViewModel() {
         setSending(true)
         const response = await fetch('/api/message/send', {
             method: 'POST',
-            body: JSON.stringify({ room: currentRoom?.id, text: text } as ApiBodyMessageSend)
+            body: JSON.stringify({ room: currentRoom?.id, text: text } as ApiMessageSend)
         }).then((res: Response) => res)
         setSending(false)
     }
@@ -121,6 +127,7 @@ export default function chatViewModel() {
         currentRoom,
         isSending,
         messages,
+        members,
         onCreateRoom,
         onJoinRoom,
         onConnectToRoom,

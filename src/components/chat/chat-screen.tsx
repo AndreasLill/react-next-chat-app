@@ -28,7 +28,7 @@ export default function ChatScreen(props: Props) {
                     {message.user ? (
                         <span className="break-all">{message.text}</span>
                     ) : (
-                        <span className="break-all text-sm font-semibold">{message.text}</span>
+                        <span className="break-all text-sm font-semibold italic">{message.text}</span>
                     )}
                 </div>
             ))}

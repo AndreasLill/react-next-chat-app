@@ -30,8 +30,8 @@ export default class AppDatabase {
             const pool = await sql.connect(sqlConfig)
             const results = await pool
                 .request()
-                .input('pEmail', sql.VarChar(255), email)
-                .query('SELECT ID, Password FROM [User] WHERE Email = @pEmail')
+                .input('Email', sql.VarChar(255), email)
+                .query('SELECT ID, Name, Email, Password FROM [User] WHERE Email = @Email')
 
             if (results.recordset) {
                 const record = results.recordset[0]
@@ -43,7 +43,9 @@ export default class AppDatabase {
 
                 console.log(`User ${email} has logged in.`)
                 return {
-                    id: record.ID
+                    id: record.ID,
+                    name: record.Name,
+                    email: record.Email
                 } as SessionUser
             }
             return null
