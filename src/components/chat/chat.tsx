@@ -12,6 +12,7 @@ import clsx from 'clsx'
 import Button from '@/ui/button/button'
 import ChatForm from './chat-form'
 import ButtonToggle from '@/ui/button/button-toggle'
+import ChatScreen from './chat-screen'
 
 export default function Chat() {
     const {
@@ -81,30 +82,7 @@ export default function Chat() {
                         <Button variant="action" icon={<X size={20} />} onClick={onDisconnectFromCurrentRoom} disabled={!currentRoom} />
                     </Tooltip>
                 </div>
-                <div
-                    className={clsx(
-                        'mx-6 flex flex-1 flex-col overflow-y-scroll rounded border border-on-surface/20 dark:border-on-surface-dark/20',
-                        currentRoom ? 'bg-background dark:bg-background-dark' : 'bg-background/60 dark:bg-background-dark/60'
-                    )}
-                >
-                    {messages?.map((message) => (
-                        <div key={message.id} className="flex flex-col px-6 py-3 hover:bg-primary/10">
-                            {message.user && (
-                                <div>
-                                    <span className="text-md font-semibold">{message.user}</span>
-                                    <span className="mx-2 text-sm text-on-surface/50 dark:text-on-surface-dark/50">
-                                        {formatDate(navigator.language, message.sent)}
-                                    </span>
-                                </div>
-                            )}
-                            {message.user ? (
-                                <span className="break-all">{message.text}</span>
-                            ) : (
-                                <span className="break-all text-sm font-semibold">{message.text}</span>
-                            )}
-                        </div>
-                    ))}
-                </div>
+                <ChatScreen messages={messages} disabled={!currentRoom} />
                 <ChatForm sending={isSending} disabled={!currentRoom} onSendMessage={onSendMessage} />
             </div>
         </div>
