@@ -13,7 +13,7 @@ const ButtonToggle = forwardRef<HTMLButtonElement, Props>(({ icon, text, toggled
             {...props}
             ref={forwardedRef}
             className={clsx(
-                'rounded-e-md border-s-2 transition-colors',
+                'rounded-e-md border-s-2 outline-none outline-offset-[-2px] transition-colors focus-visible:outline-primary',
                 toggled
                     ? 'border-primary bg-primary/20 font-semibold'
                     : 'border-on-surface/20 hover:bg-on-surface/10 dark:border-on-surface-dark/20 dark:hover:bg-on-surface-dark/10',

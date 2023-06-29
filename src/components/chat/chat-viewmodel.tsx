@@ -77,10 +77,7 @@ export default function chatViewModel() {
         setMembers(null)
 
         const id = crypto.randomUUID().toUpperCase()
-        setMessages((current) => [
-            ...current,
-            { id: `log-${id}`, sent: '', room: currentRoom.id, text: `Disconnected from ${currentRoom.name}.` } as Message
-        ])
+        setMessages([{ id: `log-${id}`, sent: '', room: currentRoom.id, text: `Disconnected from ${currentRoom.name}.` } as Message])
         setCurrentRoom(null)
     }
 

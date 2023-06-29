@@ -34,24 +34,26 @@ export default function Chat() {
             <div className="flex h-full w-80 flex-col space-y-4">
                 <div className="flex items-center justify-between rounded-lg bg-surface p-6 shadow dark:bg-surface-dark">
                     <h1 className="text-center font-semibold">{user?.name}</h1>
-                    <Tooltip text="Log Out">
-                        <Button variant="subtle" icon={<LogOut size={20} />} onClick={() => signOut()} />
-                    </Tooltip>
+                    <Button variant="outline" icon={<LogOut size={20} />} text="Log Out" onClick={() => signOut()} />
                 </div>
-                <div className="flex flex-1 flex-col space-y-6 overflow-hidden rounded-lg bg-surface p-6 shadow dark:bg-surface-dark">
-                    <div className="flex space-x-2">
-                        <Tooltip text="Create Room">
-                            <Button variant="subtle" icon={<Plus size={20} />} onClick={() => setDialogCreateRoom(true)} />
-                        </Tooltip>
-                        <DialogRoomCreate
-                            state={dialogCreateRoom}
-                            setState={setDialogCreateRoom}
-                            onSubmit={(value) => onCreateRoom(value)}
-                        />
-                        <Tooltip text="Join Room">
-                            <Button variant="subtle" icon={<Link2 size={20} />} onClick={() => setDialogJoinRoom(true)} />
-                        </Tooltip>
-                        <DialogRoomJoin state={dialogJoinRoom} setState={setDialogJoinRoom} onSubmit={(value) => onJoinRoom(value)} />
+                <div className="flex flex-grow flex-col space-y-6 overflow-hidden rounded-lg bg-surface p-6 shadow dark:bg-surface-dark">
+                    <div className="flex space-x-1">
+                        <div>
+                            <Tooltip text="Create Room">
+                                <Button variant="action" icon={<Plus size={20} />} onClick={() => setDialogCreateRoom(true)} />
+                            </Tooltip>
+                            <DialogRoomCreate
+                                state={dialogCreateRoom}
+                                setState={setDialogCreateRoom}
+                                onSubmit={(value) => onCreateRoom(value)}
+                            />
+                        </div>
+                        <div>
+                            <Tooltip text="Join Room">
+                                <Button variant="action" icon={<Link2 size={20} />} onClick={() => setDialogJoinRoom(true)} />
+                            </Tooltip>
+                            <DialogRoomJoin state={dialogJoinRoom} setState={setDialogJoinRoom} onSubmit={(value) => onJoinRoom(value)} />
+                        </div>
                     </div>
                     <div className="flex flex-grow flex-col overflow-scroll">
                         {user?.rooms?.map((room: Room) => (
@@ -65,19 +67,19 @@ export default function Chat() {
                     </div>
                 </div>
             </div>
-            <div className="flex h-full flex-1 flex-col overflow-auto rounded-lg bg-surface shadow dark:bg-surface-dark">
-                <div className="flex justify-between">
-                    <div className="flex items-center space-x-2 p-6">
-                        <PopoverRoomDetails roomId={currentRoom?.id ?? ''}>
-                            <Tooltip text="Show More">
-                                <Button variant="subtle" icon={<HelpCircle size={20} />} onClick={() => {}} />
-                            </Tooltip>
-                        </PopoverRoomDetails>
-                        <Button variant="subtle" icon={<Users size={20} />} onClick={() => {}} />
-                    </div>
-                    <div className="flex items-center space-x-2 p-6">
-                        <Button variant="subtle" icon={<X size={20} />} onClick={onDisconnectFromCurrentRoom} />
-                    </div>
+            <div className="flex h-full flex-grow flex-col overflow-auto rounded-lg bg-surface shadow dark:bg-surface-dark">
+                <div className="flex justify-end space-x-1 p-6">
+                    <Tooltip text="Active Users">
+                        <Button variant="action" icon={<Users size={20} />} onClick={() => {}} disabled={!currentRoom} />
+                    </Tooltip>
+                    <PopoverRoomDetails roomId={currentRoom?.id ?? ''}>
+                        <Tooltip text="Room Information">
+                            <Button variant="action" icon={<HelpCircle size={20} />} onClick={() => {}} disabled={!currentRoom} />
+                        </Tooltip>
+                    </PopoverRoomDetails>
+                    <Tooltip text="Disconnect">
+                        <Button variant="action" icon={<X size={20} />} onClick={onDisconnectFromCurrentRoom} disabled={!currentRoom} />
+                    </Tooltip>
                 </div>
                 <div
                     className={clsx(
