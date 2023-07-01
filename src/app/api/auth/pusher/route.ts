@@ -1,6 +1,7 @@
 import { authOptions } from '@/lib/auth'
 import AppDatabase from '@/lib/database'
 import { channelPrefix, pusherServer } from '@/lib/pusher'
+import { MemberInfo } from '@/types/member-info'
 import { getServerSession } from 'next-auth'
 import Pusher from 'pusher'
 
@@ -24,7 +25,8 @@ export async function POST(req: Request) {
     }
 
     const userData = {
-        user_id: session?.user.id
+        user_id: session?.user.id,
+        user_info: { name: session.user.name } as MemberInfo
     } as Pusher.PresenceChannelData
 
     console.log(`Authorized user ${session.user.id} for room ${channel.replace(channelPrefix, '')}.`)

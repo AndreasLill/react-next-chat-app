@@ -6,11 +6,11 @@ import DialogRoomCreate from './dialog/dialog-room-create'
 import DialogRoomJoin from './dialog/dialog-room-join'
 import Tooltip from '@/ui/overlay/tooltip'
 import chatViewModel from './chat-viewmodel'
-import PopoverRoomDetails from './popover/popover-room-details'
 import Button from '@/ui/button/button'
 import ChatForm from './chat-form'
 import ButtonToggle from '@/ui/button/button-toggle'
 import ChatScreen from './chat-screen'
+import PopoverRoomUsers from './popover/popover-room-users'
 
 export default function Chat() {
     const {
@@ -69,24 +69,33 @@ export default function Chat() {
                 </div>
             </div>
             <div className="flex h-full flex-grow flex-col overflow-auto rounded-lg bg-surface shadow dark:bg-surface-dark">
-                <div className="flex justify-end space-x-1 p-6">
-                    <Tooltip text="Active Users">
-                        <Button
-                            variant="action"
-                            text={members?.count.toString()}
-                            icon={<Users size={20} />}
-                            onClick={() => {}}
-                            disabled={!currentRoom}
-                        />
-                    </Tooltip>
-                    <PopoverRoomDetails roomId={currentRoom?.id ?? ''}>
-                        <Tooltip text="Room Information">
-                            <Button variant="action" icon={<HelpCircle size={20} />} onClick={() => {}} disabled={!currentRoom} />
+                <div className="flex justify-between p-6">
+                    <div className="flex flex-col">
+                        <p className="text-sm">{currentRoom?.name}</p>
+                        <p className="text-xs text-on-surface/50 dark:text-on-surface-dark/50">{currentRoom?.id}</p>
+                    </div>
+                    <div className="flex space-x-1">
+                        <PopoverRoomUsers users={members}>
+                            <Tooltip text="Active Users">
+                                <Button
+                                    variant="action"
+                                    text={members?.count.toString()}
+                                    icon={<Users size={20} />}
+                                    onClick={() => {}}
+                                    disabled={!currentRoom || connecting}
+                                />
+                            </Tooltip>
+                        </PopoverRoomUsers>
+
+                        <Tooltip text="Disconnect">
+                            <Button
+                                variant="action"
+                                icon={<X size={20} />}
+                                onClick={onDisconnectFromCurrentRoom}
+                                disabled={!currentRoom || connecting}
+                            />
                         </Tooltip>
-                    </PopoverRoomDetails>
-                    <Tooltip text="Disconnect">
-                        <Button variant="action" icon={<X size={20} />} onClick={onDisconnectFromCurrentRoom} disabled={!currentRoom} />
-                    </Tooltip>
+                    </div>
                 </div>
                 <ChatScreen messages={messages} disabled={!currentRoom} />
                 <ChatForm loading={sending} disabled={!currentRoom || connecting} onSendMessage={onSendMessage} />

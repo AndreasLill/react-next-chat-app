@@ -18,7 +18,7 @@ export default function chatViewModel() {
     const [connecting, setConnecting] = useState<boolean>(false)
     const [messages, setMessages] = useState<Message[]>([])
     const [pusherClient, setPusherClient] = useState<Pusher>()
-    const [members, setMembers] = useState<Members | null>()
+    const [members, setMembers] = useState<Members | null>(null)
 
     async function onCreateRoom(name: string) {
         const response = await fetch('/api/room/add', {
