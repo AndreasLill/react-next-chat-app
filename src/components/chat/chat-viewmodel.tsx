@@ -4,7 +4,7 @@ import { PusherLogger } from '@/utils/logging'
 import Pusher, { Members, Options, PresenceChannel } from 'pusher-js'
 import { useEffect, useState } from 'react'
 import useSWR, { mutate } from 'swr'
-import { ApiMessageAnnounce, ApiMessageSend } from '@/types/api'
+import { ApiMessageAnnounce, ApiMessageSend, ApiRoomAdd, ApiRoomJoin } from '@/types/api'
 import { Room } from '@/types/room'
 import { channelPrefix } from '@/lib/pusher'
 
@@ -23,7 +23,7 @@ export default function chatViewModel() {
     async function onCreateRoom(name: string) {
         const response = await fetch('/api/room/add', {
             method: 'POST',
-            body: JSON.stringify({ name: name })
+            body: JSON.stringify({ name: name } as ApiRoomAdd)
         }).then((res: Response) => res)
         const id = await response.json()
 
@@ -37,7 +37,7 @@ export default function chatViewModel() {
     async function onJoinRoom(id: string) {
         const response = await fetch('/api/room/join', {
             method: 'POST',
-            body: JSON.stringify({ id: id })
+            body: JSON.stringify({ id: id } as ApiRoomJoin)
         }).then((res: Response) => res)
 
         // Revalidate cache to fetch new data.

@@ -6,6 +6,7 @@ import Alert from '@/ui/overlay/alert'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as zod from 'zod'
+import { ApiUserAdd } from '@/types/api'
 
 interface Props {
     onChangeToLogin: () => void
@@ -56,7 +57,7 @@ export default function RegistrationForm(props: Props) {
                 name: form.name,
                 email: form.email,
                 password: form.password
-            })
+            } as ApiUserAdd)
         }).then((res: Response) => res)
 
         setLoading(false)
