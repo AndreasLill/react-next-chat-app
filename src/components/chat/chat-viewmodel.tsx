@@ -59,15 +59,15 @@ export default function chatViewModel() {
         setMessages([{ id: `log-${logId}`, sent: '', text: `Connecting to ${room.name}...` } as Message])
 
         if (currentRoom) {
-            pusherClient?.unsubscribe(`${channelPrefix}${room.id}`)
-            pusherClient?.unbind('message')
-            pusherClient?.unbind('pusher:subscription_succeeded')
+            pusherClient?.unsubscribe(`${channelPrefix}${currentRoom.id}`)
         }
 
         // TODO: Get room message history before subscribing.
 
         const channel = pusherClient?.subscribe(`${channelPrefix}${room.id}`) as PresenceChannel
-        channel.bind('message', onReceiveMessage)
+        channel.bind('message', (message: Message) => {
+            setMessages((current) => [...current, message])
+        })
         channel.bind('pusher:subscription_succeeded', async (members: Members) => {
             const response = await fetch('/api/message/announce', {
                 method: 'POST',
@@ -75,7 +75,6 @@ export default function chatViewModel() {
             }).then((res: Response) => res)
             setMembers(members)
             setConnecting(false)
-            console.log('subscription succeed called')
         })
     }
 
@@ -84,7 +83,6 @@ export default function chatViewModel() {
             return
         }
         pusherClient?.unsubscribe(`${channelPrefix}${currentRoom.id}`)
-        pusherClient?.unbind('message')
         setMembers(null)
 
         const id = crypto.randomUUID().toUpperCase()
@@ -99,10 +97,6 @@ export default function chatViewModel() {
             body: JSON.stringify({ room: currentRoom?.id, text: text } as ApiMessageSend)
         }).then((res: Response) => res)
         setSending(false)
-    }
-
-    function onReceiveMessage(message: Message) {
-        setMessages((current) => [...current, message])
     }
 
     useEffect(() => {
@@ -120,8 +114,7 @@ export default function chatViewModel() {
         // Unsubscribe, unbind and disconnect on unmount.
         return () => {
             pusherClient?.allChannels().forEach((channel) => {
-                channel.unsubscribe()
-                channel.unbind('message')
+                pusherClient.unsubscribe(channel.name)
             })
             pusherClient?.disconnect()
         }
