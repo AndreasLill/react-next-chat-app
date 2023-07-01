@@ -11,7 +11,7 @@ Authentication is made using [NextAuth](https://next-auth.js.org/) with encrypte
 
 ## Data
 Persistent data is stored using [Microsoft SQL Server](https://www.microsoft.com/en-us/sql-server/) from the API using [Node MSSQL](https://github.com/tediousjs/node-mssql) and secured using sessions.<br>
-Data is fetched from the API using [SWR](https://swr.vercel.app/) and validated using [Zod](https://zod.dev/).
+Received data is fetched and cached from the API using [SWR](https://swr.vercel.app/) and sent data is validated in both client and API using [Zod](https://zod.dev/).
 
 ## Communication
 Real time communication chat is solved with authenticated web sockets using [Pusher Channels](https://pusher.com/channels/) from the API.
